@@ -1,11 +1,13 @@
-// Julian Sparber 2014
-// Projcet for ASD summer 2014
+/* Julian Sparber 2014
+ Projcet for ASD summer 2014 */
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #define true 1
 #define false 0
 #define STRING_LENGTH 32
+
 typedef struct tArc {
 	char node[STRING_LENGTH];
 	double distance[3];
@@ -19,6 +21,8 @@ typedef struct tNode {
 } tNode;
 
 
+int printArc(tArc *);
+int printNode(tNode *);
 int getDistance(FILE *, double[]);
 int addArc(tArc **, tArc *);
 int addNode(tNode **, tNode *);
@@ -29,13 +33,13 @@ int main () {
 	FILE *inputDB;
 	inputDB = fopen("database.txt","r"); 
 	loadDB(inputDB);
-
 	fclose(inputDB);
+
 	return 0;
 }
 
 int loadDB(FILE *inputDB) {
-	int i, j;
+	int i;
 	int error = false;
 	int maxNode = 0; 
 	int node;
@@ -60,23 +64,40 @@ int loadDB(FILE *inputDB) {
 			getNodeName(inputDB, newArc->node);
 			getDistance(inputDB, newArc->distance);
 			addArc(&newNode->arc, newArc);
-		/*printf("Arc:\n");
-		for (j = 0; j < STRING_LENGTH && newArc->node[j] != '\n'; j++)
-			printf("%c", newArc->node[j]);
-			printf("\n");
-		*/
 		}
 		addNode(&DataHead, newNode);
 	}
-	/*for (i = 0; i < STRING_LENGTH && DataHead->next->node[i] != '\n'; i++)
-		printf("%c", DataHead->next->node[i]);
-*/
-	printf("%lf %lf %lf", DataHead->next->arc->distance[0], DataHead->arc->distance[1], DataHead->arc->distance[2]);
-	printf("\n");
+	printf("Got this Data:\n");
+	printNode(DataHead);
 	return error;
 }
 
-int printNode(
+int printNode(tNode *node) {
+	int i;
+	printf("Arcs of: ");
+	for (i = 0; i < STRING_LENGTH && node->node[i] != '\n'; i++)
+		printf("%c", node->node[i]);
+	printf("\n");
+	printArc(node->arc);
+	if (node->next != NULL)
+		printNode(node->next);
+	return 0;
+}
+
+int printArc(tArc *arc) {
+	int i;
+	printf("\t");
+	for (i = 0; i < STRING_LENGTH && arc->node[i] != '\n'; i++)
+		printf("%c", arc->node[i]);
+	printf(" with distances: ");
+	printf("%.2lf %.2lf %.2lf",
+		arc->distance[0], arc->distance[1], arc->distance[2]);
+	printf("\n");
+	if (arc->next != NULL)
+		printArc(arc->next);
+	return 0;
+}
+
 int addNode(tNode **DataHead, tNode *newNode) {
 	tNode *curEl;
 	if ( *DataHead == NULL ) {
@@ -106,7 +127,8 @@ int addArc(tArc **DataHead, tArc *newNode) {
 }
 
 int getDistance(FILE *inputDB, double distance[]) {
-	fscanf(inputDB, "%lf %lf %lf\n", &distance[0], &distance[1], &distance[2]);
+	fscanf(inputDB, "%lf %lf %lf\n",
+		&distance[0], &distance[1], &distance[2]);
 	return 0;
 }
 
