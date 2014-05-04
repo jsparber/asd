@@ -3,42 +3,55 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define true 1
 #define false 0
 #define STRING_LENGTH 32
+#define MAXDISTANCE 255
 
 typedef struct tArc {
 	char node[STRING_LENGTH];
 	double distance[3];
 	struct tArc *next;
+	struct tNode *dest;
 } tArc;
 
 typedef struct tNode {
 	char node[STRING_LENGTH];
 	tArc *arc;
 	struct tNode *next;
+	int taken;
 } tNode;
 
 
+int insertArcDest(tNode *, tNode *, tArc *);
+double exploreArcList(tArc *, char [], char [], int);
+double exploreArc(tArc *, char [], char [], int);
+int calcRoute(tNode *, char [], char [], int);
+tNode * findNode(tNode*, char []);
 int printArc(tArc *);
 int printNode(tNode *);
+int printAllNode(tNode *);
 int getDistance(FILE *, double[]);
 int addArc(tArc **, tArc *);
 int addNode(tNode **, tNode *);
 int getNodeName(FILE *, char *);
-int loadDB(FILE *);
+tNode* loadDB(FILE *);
 
 int main () {
 	FILE *inputDB;
+	tNode *dataHead = NULL;
 	inputDB = fopen("database.txt","r"); 
-	loadDB(inputDB);
+	dataHead = loadDB(inputDB);
 	fclose(inputDB);
+	insertArcDest(dataHead, dataHead, dataHead->arc);
+	calcRoute(dataHead, "v_a\n", "v_d\n", 0);
 
 	return 0;
 }
 
-int loadDB(FILE *inputDB) {
+tNode* loadDB(FILE *inputDB) {
 	int i;
 	int error = false;
 	int maxNode = 0; 
@@ -58,8 +71,10 @@ int loadDB(FILE *inputDB) {
 		printf("Max Arcs: %d\n", maxArc);
 		newNode = (tNode *)malloc(sizeof(tNode));
 		newNode->next = NULL;
+		newNode->taken = false;
 		for (i = 0; i < maxArc; i++) {
 			newArc = (tArc *)malloc(sizeof(tArc));
+			newArc->dest = NULL;
 			getNodeName(inputDB, newNode->node);
 			getNodeName(inputDB, newArc->node);
 			getDistance(inputDB, newArc->distance);
@@ -68,10 +83,102 @@ int loadDB(FILE *inputDB) {
 		addNode(&DataHead, newNode);
 	}
 	printf("Got this Data:\n");
-	printNode(DataHead);
-	return error;
+	printAllNode(DataHead);
+	return (!error) ? DataHead : NULL;
 }
 
+int calcRoute(
+	tNode *headData, char startNode[], char endNode[], int typology) {
+	tNode *foundStartNode;
+	tNode *foundEndNode;
+	double distance;
+	foundStartNode = findNode(headData, startNode);
+	foundEndNode = findNode(headData, endNode);
+	if (foundStartNode != NULL && foundEndNode != NULL) {
+		printf("Start and end Node found!\n");
+		printNode(foundStartNode);
+		printf("Start routing\n");
+		distance = exploreArcList(foundStartNode->arc, startNode, endNode, typology);
+	}
+	else
+		printf("Start or end Node not found!\n");
+
+	printf("Result Distance is: %lf\n", distance);
+	return 0;
+}
+
+double exploreArcList(tArc *arc, char startNode[], char endNode[], int typology) {
+	double distance1 = 255;
+	double distance2 = 255;
+	if ( strcmp(arc->node, startNode) != 0 && arc->dest->taken != true) {
+		printf("\tIs not the start Node. Node: %s", arc->node);
+		distance1 = exploreArc(arc, startNode, endNode, typology);
+		//printf("Distance 1: %lf\n", distance1);
+	}
+	else {
+		printf("\tAlready explored or start node: %s", arc->node);
+		distance1 = MAXDISTANCE;
+	}
+	if (arc->next != NULL) {
+		printf("\tStart new Arc\n");
+		distance2 = exploreArcList(arc->next, startNode, endNode, typology);
+		//printf("Distance 2: %lf\n", distance2);
+	}
+	//printf("Distance1 = %lf, distance2 = %lf\n", distance1, distance2);
+	return (distance1 > distance2) ? distance2 : distance1;
+}
+
+double exploreArc(tArc *arc, char startNode[], char endNode[], int typology) {
+	double distance = arc->distance[typology];
+	printf("Distance: %lf\n", distance);
+	if ( strcmp(arc->node, endNode) != 0 ) {
+			arc->dest->taken = true;
+			printf("Start new Node\n");
+			distance += exploreArcList(arc->dest->arc, startNode, endNode, typology);
+	}
+	else {
+		printf("End node found\n");
+	}
+	return distance;
+}
+int insertArcDest(tNode * dataHead, tNode * node, tArc * arc) {
+	if (arc != NULL) {
+		printf("Arc not NULL search for %s\n", arc->node);
+		arc->dest = findNode(dataHead, arc->node);
+		if (arc->next != NULL) {
+			printf("Go to next Arc\n");
+			insertArcDest(dataHead, node, arc->next);
+		}
+		else
+			if (node->next != NULL && node->next->arc != NULL) {
+				printf("Go to next Node\n");
+				insertArcDest(dataHead, node->next, node->next->arc);
+			}
+	}
+	return 0;
+}
+
+tNode * findNode(tNode *node, char nodeName[]) {
+	tNode * foundNode = NULL;
+	if (strcmp(nodeName, node->node) == 0) {
+		printf("Found Node: %s", nodeName);
+		printNode(node);
+		foundNode = node;
+	}
+	else
+		if (node->next != NULL)
+			foundNode = findNode(node->next, nodeName);
+		else
+			foundNode = NULL;
+	return foundNode;
+}
+
+int printAllNode(tNode *node) {
+		printNode(node);
+	if (node->next != NULL)
+		printAllNode(node->next);
+	return 0;
+}
 int printNode(tNode *node) {
 	int i;
 	printf("Arcs of: ");
@@ -79,8 +186,6 @@ int printNode(tNode *node) {
 		printf("%c", node->node[i]);
 	printf("\n");
 	printArc(node->arc);
-	if (node->next != NULL)
-		printNode(node->next);
 	return 0;
 }
 
