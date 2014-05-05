@@ -107,7 +107,7 @@ int calcRoute(
 	return 0;
 }
 
-double exploreArcList(tArc *arc, char startNode[], char endNode[], int typology) {
+/*double exploreArcList(tArc *arc, char startNode[], char endNode[], int typology) {
 	double distance1 = 255;
 	double distance2 = 255;
 	if ( strcmp(arc->node, startNode) != 0 && arc->dest->taken != true) {
@@ -157,6 +157,8 @@ int insertArcDest(tNode * dataHead, tNode * node, tArc * arc) {
 	}
 	return 0;
 }
+
+*/
 
 tNode * findNode(tNode *node, char nodeName[]) {
 	tNode * foundNode = NULL;
