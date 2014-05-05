@@ -8,7 +8,7 @@
 #define true 1
 #define false 0
 #define STRING_LENGTH 32
-#define MAXDISTANCE 255
+#define MAX_DISTANCE 255
 
 typedef struct tArc {
 	char node[STRING_LENGTH];
@@ -21,7 +21,7 @@ typedef struct tNode {
 	char node[STRING_LENGTH];
 	tArc *arc;
 	struct tNode *next;
-	int taken;
+  double minDistance;
 } tNode;
 
 
@@ -87,6 +87,14 @@ tNode* loadDB(FILE *inputDB) {
 	return (!error) ? DataHead : NULL;
 }
 
+int clearDistances(tNode *headData) {
+  headData->minDistance = 0;
+  tNode *node;
+  for (node = headData->next; node != NULL; node = node->next)
+    node->minDistance = MAX_DISTANCE;
+  return o;
+}
+
 int calcRoute(
 	tNode *headData, char startNode[], char endNode[], int typology) {
 	tNode *foundStartNode;
@@ -108,8 +116,6 @@ int calcRoute(
 }
 
 double exploreArcList(tArc *arc, char startNode[], char endNode[], int typology) {
-	double distance1 = 255;
-	double distance2 = 255;
 	if ( strcmp(arc->node, startNode) != 0 && arc->dest->taken != true) {
 		printf("\tIs not the start Node. Node: %s", arc->node);
 		distance1 = exploreArc(arc, startNode, endNode, typology);
@@ -117,7 +123,7 @@ double exploreArcList(tArc *arc, char startNode[], char endNode[], int typology)
 	}
 	else {
 		printf("\tAlready explored or start node: %s", arc->node);
-		distance1 = MAXDISTANCE;
+		distance1 = MAX_DISTANCE;
 	}
 	if (arc->next != NULL) {
 		printf("\tStart new Arc\n");
