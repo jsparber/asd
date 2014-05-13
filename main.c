@@ -27,7 +27,7 @@ typedef struct tNode {
 
 int calcDistance(tArc *, tNode *, int); 
 int findNodeByAddr(tNode *, tNode *);
-int removeNode(tNode *, tNode *);
+int removeHead(tNode **head);
 int insertArcDest(tNode *, tNode *, tArc *);
 int exploreNodes(tNode *, tNode*, int);
 int calcRoute(tNode *, char [], char [], int);
@@ -48,8 +48,9 @@ int main () {
 	dataHead = loadDB(inputDB);
 	fclose(inputDB);
 	insertArcDest(dataHead, dataHead, dataHead->arc);
-	calcRoute(dataHead, "v_a\n", "v_d\n", 0);
+	calcRoute(dataHead, "v_b\n", "v_c\n", 0);
 
+	free(dataHead);
 	return 0;
 }
 
@@ -89,10 +90,10 @@ tNode* loadDB(FILE *inputDB) {
 }
 
 int clearDistances(tNode *headData, tNode *startNode) {
-  startNode->minDistance = 0;
   tNode *node;
-  for (node = headData->next; node != NULL; node = node->next)
+  for (node = headData; node != NULL; node = node->next)
     node->minDistance = MAX_DISTANCE;
+  startNode->minDistance = 0;
   return 0;
 }
 
@@ -105,6 +106,7 @@ int calcRoute(
 	if (foundStartNode != NULL && foundEndNode != NULL) {
 		printf("Start and end Node found!\n");
 		printNode(foundStartNode);
+		printNode(foundEndNode);
 		printf("Start routing\n");
     exploreNodes(headData, foundStartNode, typology);
 
@@ -117,30 +119,30 @@ int calcRoute(
 }
 
 int exploreNodes(tNode * head, tNode * startNode, int typology) {
-  tNode * node = head;
   tArc * arc;
-  tNode *explored = NULL;
   tNode *notExplored = head;
   clearDistances(head, startNode);
   while (notExplored != NULL) {
-   removeNode(notExplored, node); 
-   addNode(&explored, node);
-   for (arc = node->arc; arc != NULL; arc = arc->next) {
-     if (findNodeByAddr(explored, arc->dest))
-       calcDistance(arc, node, typology);
+   for (arc = notExplored->arc; arc != NULL; arc = arc->next) {
+     if (!findNodeByAddr(notExplored, arc->dest))
+      calcDistance(arc, notExplored, typology);
    }
-   node = node->next;
+    removeHead(&notExplored); 
   }
   return 0;
 }
 int calcDistance(tArc *arc, tNode *node, int typology) {
  if (arc->dest->minDistance > node->minDistance + arc->distance[typology])
    arc->dest->minDistance = node->minDistance + arc->distance[typology];
+ printf("Work node: %s Distance %lf\n", node->node, arc->dest->minDistance);
  return 0;
 } 
 int findNodeByAddr(tNode *head, tNode *node) {
-  if (head == node)
+	printf("Searching ...\n");
+  if (head == node) {
+		printf("Found %s\n", node->node);
     return true;
+	}
   else
     if (head == NULL)
       return false;
@@ -148,13 +150,9 @@ int findNodeByAddr(tNode *head, tNode *node) {
       findNodeByAddr(head->next, node);
   return false;
 }
-int removeNode(tNode *head, tNode * node) {
-  if (head->next == node){
-    head->next = head->next->next;
-  }
-  else
-    removeNode(head->next, node);
-
+int removeHead(tNode **head) {
+	printf("Remove Head (node) form unExploard List\n");
+  *head = (*head)->next;
   return 0;
 }
 int insertArcDest(tNode * dataHead, tNode * node, tArc * arc) {
