@@ -113,7 +113,6 @@ int calcRoute(
 		printNode(foundStartNode);
 		printNode(foundEndNode);
 		printf("Start routing\n");
-    clearDistances(headData, foundStartNode);
     exploreNodes(headData, foundStartNode, typology);
 	}
 	else
@@ -123,39 +122,19 @@ int calcRoute(
 	return 0;
 }
 
-int exploreNodes(tNode * head, tNode * startNode, int typology) {
-  tArc * arc;
-  tNode *notExplored = head;
-  for (arc = notExplored->arc; arc != NULL; arc = arc->next) {
-    if (arc->dest->minDistance > arc->distance[typology])
-      arc->dest->minDistance = arc->distance[typology];
-   }
-
-  while (notExplored != NULL) {
-   if (notExplored != startNode) {
-   for (arc = notExplored->arc; arc != NULL; arc = arc->next) {
-     if (!findNodeByAddr(notExplored, arc->dest)) {
-       printf("Current Node Distance: %lf of %s", notExplored->minDistance, notExplored->node);
-       //printf("Found Node in notExplored list %lf\n", arc->dest->minDistance);
-       calcDistance(arc, notExplored, typology);
-       //printf("After %lf\n", arc->dest->minDistance);
-     }
-   }
-    removeHead(&notExplored); 
-   }
-   else
-     notExplored = notExplored->next;
-  }
+int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
+  tNode *node;
+  tArc *arc;
+  tList *exploredList;
+  clearDistances(dataHead, startNode);
+  exploredList = createList(dataHead);
   return 0;
 }
 int calcDistance(tArc *arc, tNode *node, int typology) {
-   //printf("Prima %lf\n", arc->dest->minDistance);
-   //printf("Prima Current Node %lf\n", node->minDistance);
  if (arc->dest->minDistance > node->minDistance + arc->distance[typology]) {
    arc->dest->minDistance = node->minDistance + arc->distance[typology];
    printf("After %lf\n", arc->dest->minDistance);
  }
- //printf("Work node: %s -> Distance %lf\n", node->node, arc->dest->minDistance);
  return 0;
 } 
 
