@@ -24,8 +24,13 @@ typedef struct tNode {
   double minDistance;
 } tNode;
 
+typedef struct tList {
+  tNode *node;
+  struct tList *next;
+} tList;
 
 int calcDistance(tArc *, tNode *, int); 
+tList * createList(tNode *);
 int findNodeByAddr(tNode *, tNode *);
 int removeNode(tNode **, tNode *); 
 int removeHead(tNode **);
@@ -125,10 +130,50 @@ int calcRoute(
 int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
   tNode *node;
   tArc *arc;
-  tList *exploredList;
+  tList *notExploredList;
   clearDistances(dataHead, startNode);
-  exploredList = createList(dataHead);
+  notExploredList = createList(dataHead);
+  while (notExploredList != NULL) {
+      node = removeMinListEl(&notExploredList);
+    for (arc = node->arc; arc ! NULL; arc = arc->next) {
+     if (!(findNodeByAddr(dataHead, arc->dest))) { 
+       calcDistance(arc, node, typology);
+     }
+    }
+  }
+
   return 0;
+}
+tNode * removeMinList(tList **list) {
+  tNode *node = NULL; 
+  tList *el;
+  tList *precEl;
+  double minDistance = MAX_DISTANCE;
+  for ( el = *list, precEl = *list; el != NULL; el= el->next) {
+      if (minDistance > el->node->minDistance) {
+        printf("Found new min Distance");
+        minDistance = el->node->minDistance;
+        node = el->node;
+        precEl->next = node
+      }
+    precEl = el;
+  }
+  return node;
+}
+tList * createList(tNode * dataHead) {
+  tNode *node;
+  tList *list = NULL;
+  tList *newElList;
+  for (node = dataHead; node != NULL; node = node->next) {
+		newElList = (tList *)malloc(sizeof(tList));
+    newElList->node = node;
+    newElList->next = NULL;
+    if (list == NULL)
+      list = newElList;
+    else
+      list->next = newElList;
+  }
+  return list;
 }
 int calcDistance(tArc *arc, tNode *node, int typology) {
  if (arc->dest->minDistance > node->minDistance + arc->distance[typology]) {
@@ -152,11 +197,6 @@ int findNodeByAddr(tNode *head, tNode *node) {
   return false;
 }
 
-int removeHead(tNode **head) {
-	printf("Remove Head (node) form unExploard List\n");
-  *head = (*head)->next;
-  return 0;
-}
 int insertArcDest(tNode * dataHead, tNode * node, tArc * arc) {
 	if (arc != NULL) {
 		printf("Arc not NULL search for %s\n", arc->node);
