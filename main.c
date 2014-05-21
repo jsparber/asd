@@ -29,6 +29,7 @@ typedef struct tList {
   struct tList *next;
 } tList;
 
+tNode * removeMinListEl(tList **);
 int calcDistance(tArc *, tNode *, int); 
 tList * createList(tNode *);
 int findNodeByAddr(tNode *, tNode *);
@@ -131,20 +132,23 @@ int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
   tNode *node;
   tArc *arc;
   tList *notExploredList;
+	tList *list;
   clearDistances(dataHead, startNode);
   notExploredList = createList(dataHead);
-  while (notExploredList != NULL) {
-      node = removeMinListEl(&notExploredList);
-    for (arc = node->arc; arc ! NULL; arc = arc->next) {
-     if (!(findNodeByAddr(dataHead, arc->dest))) { 
-       calcDistance(arc, node, typology);
-     }
-    }
-  }
+	for (list = notExploredList; list != NULL; list = list->next)
+		printf("Node of not explored list %s", list->node->node);
+  //while (notExploredList != NULL) {
+      //node = removeMinListEl(&notExploredList);
+    //for (arc = node->arc; arc != NULL; arc = arc->next) {
+     //if (!(findNodeByAddr(dataHead, arc->dest))) { 
+       //calcDistance(arc, node, typology);
+    // }
+    //}
+  //}
 
   return 0;
 }
-tNode * removeMinList(tList **list) {
+tNode * removeMinListEl(tList **list) {
   tNode *node = NULL; 
   tList *el;
   tList *precEl;
@@ -154,26 +158,32 @@ tNode * removeMinList(tList **list) {
         printf("Found new min Distance");
         minDistance = el->node->minDistance;
         node = el->node;
-        precEl->next = node
+        precEl->next = el->next;
       }
     precEl = el;
   }
   return node;
 }
-tList * createList(tNode * dataHead) {
+
+tList * createList(tNode *dataHead) {
   tNode *node;
-  tList *list = NULL;
+  tList *firstListEl = NULL;
+  tList *lastListEl = NULL;
   tList *newElList;
   for (node = dataHead; node != NULL; node = node->next) {
 		newElList = (tList *)malloc(sizeof(tList));
     newElList->node = node;
     newElList->next = NULL;
-    if (list == NULL)
-      list = newElList;
-    else
-      list->next = newElList;
+    if (firstListEl == NULL) {
+      firstListEl = newElList;
+			lastListEl = firstListEl;
+		}
+    else {
+      lastListEl->next = newElList;
+			lastListEl = lastListEl->next;
+		}
   }
-  return list;
+  return firstListEl;
 }
 int calcDistance(tArc *arc, tNode *node, int typology) {
  if (arc->dest->minDistance > node->minDistance + arc->distance[typology]) {
