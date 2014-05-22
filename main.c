@@ -22,6 +22,7 @@ typedef struct tNode {
 	tArc *arc;
 	struct tNode *next;
   double minDistance;
+	struct tNode *parent;
 } tNode;
 
 typedef struct tList {
@@ -29,6 +30,7 @@ typedef struct tList {
   struct tList *next;
 } tList;
 
+int printResult(tNode *, tNode *);
 tNode * removeMinListEl(tList **);
 int calcDistance(tArc *, tNode *, int); 
 tList * createList(tNode *);
@@ -55,7 +57,7 @@ int main () {
 	dataHead = loadDB(inputDB);
 	fclose(inputDB);
 	insertArcDest(dataHead, dataHead, dataHead->arc);
-	calcRoute(dataHead, "v_a\n", "v_c\n", 0);
+	calcRoute(dataHead, "v_e\n", "v_d\n", 0);
 
 	free(dataHead);
 	return 0;
@@ -99,8 +101,10 @@ tNode* loadDB(FILE *inputDB) {
 
 int clearDistances(tNode *headData, tNode *endNode) {
   tNode *node;
-  for (node = headData; node != NULL; node = node->next)
+  for (node = headData; node != NULL; node = node->next) {
     node->minDistance = MAX_DISTANCE;
+		node->parent = NULL;
+	}
   endNode->minDistance = 0.0;
   /*for (node = headData; node != NULL; node = node->next)
     printf("%lf - ", node->minDistance);
@@ -120,7 +124,8 @@ int calcRoute(
 		printNode(foundEndNode);*/
 		printf("Start routing\n");
     exploreNodes(headData, foundStartNode, typology);
-		printf("Result Distance is: %lf\n", foundEndNode->minDistance);
+		printResult(foundStartNode, foundEndNode);
+		//printf("Result Distance is: %lf\n", foundEndNode->minDistance);
 	}
 	else
 		printf("Start or end Node not found!\n");
@@ -128,6 +133,14 @@ int calcRoute(
 	return 0;
 }
 
+int printResult(tNode *startNode, tNode *endNode) {
+	tNode *node;
+	printf("Route:\n");
+	for (node = endNode; node != startNode; node = node->parent)
+		printf("\t%s", node->parent->node);
+	printf("Result Distance is: %lf\n", endNode->minDistance);
+	return 0;
+}
 int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
   tNode *node;
   tArc *arc;
@@ -203,6 +216,7 @@ tList * createList(tNode *dataHead) {
 int calcDistance(tArc *arc, tNode *node, int typology) {
  if (arc->dest->minDistance > node->minDistance + arc->distance[typology]) {
    arc->dest->minDistance = node->minDistance + arc->distance[typology];
+	 arc->dest->parent = node;
    printf("After %lf\n", arc->dest->minDistance);
  }
  return 0;
