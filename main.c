@@ -32,7 +32,7 @@ typedef struct tList {
 tNode * removeMinListEl(tList **);
 int calcDistance(tArc *, tNode *, int); 
 tList * createList(tNode *);
-int findNodeByAddr(tNode *, tNode *);
+int findNodeByAddr(tList *, tNode *);
 int removeNode(tNode **, tNode *); 
 int removeHead(tNode **);
 int insertArcDest(tNode *, tNode *, tArc *);
@@ -101,7 +101,7 @@ int clearDistances(tNode *headData, tNode *endNode) {
   tNode *node;
   for (node = headData; node != NULL; node = node->next)
     node->minDistance = MAX_DISTANCE;
-  endNode->minDistance = 0;
+  endNode->minDistance = 0.0;
   /*for (node = headData; node != NULL; node = node->next)
     printf("%lf - ", node->minDistance);
   printf("\n");*/
@@ -140,8 +140,10 @@ int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
   while (notExploredList != NULL) {
       node = removeMinListEl(&notExploredList);
 			printf("Node token form the not explored list %s", node->node);
+	for (list = notExploredList; list != NULL; list = list->next)
+		printf("Node of not explored list %s", list->node->node);
     for (arc = node->arc; arc != NULL; arc = arc->next) {
-     if (!(findNodeByAddr(dataHead, arc->dest))) { 
+     if (findNodeByAddr(notExploredList, arc->dest)) { 
        calcDistance(arc, node, typology);
      }
     }
@@ -154,7 +156,7 @@ tNode * removeMinListEl(tList **list) {
   tList *el;
   tList *precEl;
   double minDistance = MAX_DISTANCE;
-  for ( el = *list; el != NULL; el= el->next) {
+  for (el = *list; el != NULL; el= el->next) {
       if (minDistance >= el->node->minDistance) {
         //printf("Found new min Distance");
         minDistance = el->node->minDistance;
@@ -169,8 +171,12 @@ tNode * removeMinListEl(tList **list) {
 	}
 	if (el == *list && el->next == NULL)
 		*list = NULL;
-	precEl->next = el->next;
-
+	if (el == *list)
+		*list = el->next;
+	else
+		precEl->next = el->next;
+  printf("minDistace %lf\n", minDistance);
+	free(el);
   return node;
 }
 
@@ -202,18 +208,21 @@ int calcDistance(tArc *arc, tNode *node, int typology) {
  return 0;
 } 
 
-int findNodeByAddr(tNode *head, tNode *node) {
-	//printf("Searching ...\n");
-  if (head == node) {
-		//printf("%s", node->node);
-    return true;
+int findNodeByAddr(tList *head, tNode *node) {
+	/*printf("Searching ...\n");*/
+	int res = false;
+	if (head != NULL) {
+  	if (head->node == node) {
+    	res = true;
+		}
+  	else {
+    	if (head->next == NULL)
+      	res = false;
+    	else
+      	findNodeByAddr(head->next, node);
+		}
 	}
-  else
-    if (head == NULL)
-      return false;
-    else
-      findNodeByAddr(head->next, node);
-  return false;
+  return res;
 }
 
 int insertArcDest(tNode * dataHead, tNode * node, tArc * arc) {
