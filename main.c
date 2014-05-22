@@ -75,10 +75,10 @@ tNode* loadDB(FILE *inputDB) {
 	if (fgetc(inputDB) != '\n')
 		error = true;
 
-	printf("Max Nodes: %d \n", maxNode);
+	/*printf("Max Nodes: %d \n", maxNode);*/
 	for (node = 0; node < maxNode; node++) {
 		fscanf(inputDB, "%d\n", &maxArc);
-		printf("Max Arcs: %d\n", maxArc);
+		/*printf("Max Arcs: %d\n", maxArc);*/
 		newNode = (tNode *)malloc(sizeof(tNode));
     newNode->minDistance = 0.0;
 		newNode->next = NULL;
@@ -102,9 +102,9 @@ int clearDistances(tNode *headData, tNode *endNode) {
   for (node = headData; node != NULL; node = node->next)
     node->minDistance = MAX_DISTANCE;
   endNode->minDistance = 0;
-  for (node = headData; node != NULL; node = node->next)
+  /*for (node = headData; node != NULL; node = node->next)
     printf("%lf - ", node->minDistance);
-  printf("\n");
+  printf("\n");*/
   return 0;
 }
 
@@ -116,8 +116,8 @@ int calcRoute(
 	foundEndNode = findNode(headData, endNode);
 	if (foundStartNode != NULL && foundEndNode != NULL) {
 		printf("Start and end Node found!\n");
-		printNode(foundStartNode);
-		printNode(foundEndNode);
+		/*printNode(foundStartNode);
+		printNode(foundEndNode);*/
 		printf("Start routing\n");
     exploreNodes(headData, foundStartNode, typology);
 	}
@@ -139,14 +139,12 @@ int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
 		printf("Node of not explored list %s", list->node->node);*/
   while (notExploredList != NULL) {
       node = removeMinListEl(&notExploredList);
-			printf("Node of not explored list %s", node->node);
-	for (list = notExploredList; list != NULL; list = list->next)
-		printf("Risule :Node of not explored list %s", list->node->node);
-    //for (arc = node->arc; arc != NULL; arc = arc->next) {
-     //if (!(findNodeByAddr(dataHead, arc->dest))) { 
-       //calcDistance(arc, node, typology);
-    // }
-    //}
+			printf("Node token form the not explored list %s", node->node);
+    for (arc = node->arc; arc != NULL; arc = arc->next) {
+     if (!(findNodeByAddr(dataHead, arc->dest))) { 
+       calcDistance(arc, node, typology);
+     }
+    }
   }
 
   return 0;
@@ -220,15 +218,15 @@ int findNodeByAddr(tNode *head, tNode *node) {
 
 int insertArcDest(tNode * dataHead, tNode * node, tArc * arc) {
 	if (arc != NULL) {
-		printf("Arc not NULL search for %s\n", arc->node);
+		/*printf("Arc not NULL search for %s\n", arc->node);*/
 		arc->dest = findNode(dataHead, arc->node);
 		if (arc->next != NULL) {
-			printf("Go to next Arc\n");
+			/*printf("Go to next Arc\n");*/
 			insertArcDest(dataHead, node, arc->next);
 		}
 		else
 			if (node->next != NULL && node->next->arc != NULL) {
-				printf("Go to next Node\n");
+				/*printf("Go to next Node\n");*/
 				insertArcDest(dataHead, node->next, node->next->arc);
 			}
 	}
@@ -238,8 +236,8 @@ int insertArcDest(tNode * dataHead, tNode * node, tArc * arc) {
 tNode * findNode(tNode *node, char nodeName[]) {
 	tNode * foundNode = NULL;
 	if (strcmp(nodeName, node->node) == 0) {
-		printf("Found Node: %s", nodeName);
-		printNode(node);
+		/*printf("Found Node: %s", nodeName);
+		printNode(node);*/
 		foundNode = node;
 	}
 	else
@@ -284,12 +282,12 @@ int addNode(tNode **DataHead, tNode *newNode) {
 	tNode *curEl;
 	if ( *DataHead == NULL ) {
 		*DataHead = newNode;
-		printf("First Element added\n");
+		/*printf("First Element added\n");*/
 	}
 	else {
 		for (curEl = *DataHead; curEl->next != NULL; curEl = curEl->next);
 		curEl->next = newNode;
-		printf("New Element attached\n");
+		/*printf("New Element attached\n");*/
 	}
 	return 0;
 }
@@ -298,12 +296,12 @@ int addArc(tArc **DataHead, tArc *newNode) {
 	tArc *curEl;
 	if ( *DataHead == NULL ) {
 		*DataHead = newNode;
-		printf("First Arc added\n");
+		/*printf("First Arc added\n");*/
 	}
 	else {
 		for (curEl = *DataHead; curEl->next != NULL; curEl = curEl->next);
 		curEl->next = newNode;
-		printf("New Arc attached\n");
+		/*printf("New Arc attached\n");*/
 	}
 	return 0;
 }
