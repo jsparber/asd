@@ -55,7 +55,7 @@ int main () {
 	dataHead = loadDB(inputDB);
 	fclose(inputDB);
 	insertArcDest(dataHead, dataHead, dataHead->arc);
-	calcRoute(dataHead, "v_e\n", "v_f\n", 0);
+	calcRoute(dataHead, "v_a\n", "v_c\n", 0);
 
 	free(dataHead);
 	return 0;
@@ -132,7 +132,7 @@ int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
   tNode *node;
   tArc *arc;
   tList *notExploredList;
-	tList *list;
+	//tList *list;
   clearDistances(dataHead, startNode);
   notExploredList = createList(dataHead);
 	/*for (list = notExploredList; list != NULL; list = list->next)
@@ -140,10 +140,10 @@ int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
   while (notExploredList != NULL) {
       node = removeMinListEl(&notExploredList);
 			printf("Node token form the not explored list %s", node->node);
-	for (list = notExploredList; list != NULL; list = list->next)
-		printf("Node of not explored list %s", list->node->node);
+	//for (list = notExploredList; list != NULL; list = list->next)
+		//printf("Node of not explored list %s", list->node->node);
     for (arc = node->arc; arc != NULL; arc = arc->next) {
-     if (findNodeByAddr(notExploredList, arc->dest)) { 
+     if (findNodeByAddr(notExploredList, arc->dest) == true) { 
        calcDistance(arc, node, typology);
      }
     }
@@ -209,17 +209,20 @@ int calcDistance(tArc *arc, tNode *node, int typology) {
 } 
 
 int findNodeByAddr(tList *head, tNode *node) {
-	/*printf("Searching ...\n");*/
+	//printf("Searching ...\n");
 	int res = false;
+
 	if (head != NULL) {
   	if (head->node == node) {
+			printf("Found ...\n");
     	res = true;
 		}
   	else {
     	if (head->next == NULL)
       	res = false;
-    	else
-      	findNodeByAddr(head->next, node);
+    	else {
+      	res = findNodeByAddr(head->next, node);
+			}
 		}
 	}
   return res;
