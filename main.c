@@ -135,16 +135,19 @@ int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
 	tList *list;
   clearDistances(dataHead, startNode);
   notExploredList = createList(dataHead);
+	/*for (list = notExploredList; list != NULL; list = list->next)
+		printf("Node of not explored list %s", list->node->node);*/
+  while (notExploredList != NULL) {
+      node = removeMinListEl(&notExploredList);
+			printf("Node of not explored list %s", node->node);
 	for (list = notExploredList; list != NULL; list = list->next)
-		printf("Node of not explored list %s", list->node->node);
-  //while (notExploredList != NULL) {
-      //node = removeMinListEl(&notExploredList);
+		printf("Risule :Node of not explored list %s", list->node->node);
     //for (arc = node->arc; arc != NULL; arc = arc->next) {
      //if (!(findNodeByAddr(dataHead, arc->dest))) { 
        //calcDistance(arc, node, typology);
     // }
     //}
-  //}
+  }
 
   return 0;
 }
@@ -153,15 +156,23 @@ tNode * removeMinListEl(tList **list) {
   tList *el;
   tList *precEl;
   double minDistance = MAX_DISTANCE;
-  for ( el = *list, precEl = *list; el != NULL; el= el->next) {
-      if (minDistance > el->node->minDistance) {
-        printf("Found new min Distance");
+  for ( el = *list; el != NULL; el= el->next) {
+      if (minDistance >= el->node->minDistance) {
+        //printf("Found new min Distance");
         minDistance = el->node->minDistance;
         node = el->node;
-        precEl->next = el->next;
       }
-    precEl = el;
   }
+	el = *list;
+	precEl = el;
+	while (el->node != node && el != NULL) {
+		precEl = el;
+		el = el->next;
+	}
+	if (el == *list && el->next == NULL)
+		*list = NULL;
+	precEl->next = el->next;
+
   return node;
 }
 
