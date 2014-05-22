@@ -55,7 +55,7 @@ int main () {
 	dataHead = loadDB(inputDB);
 	fclose(inputDB);
 	insertArcDest(dataHead, dataHead, dataHead->arc);
-	calcRoute(dataHead, "v_b\n", "v_c\n", 0);
+	calcRoute(dataHead, "v_e\n", "v_f\n", 0);
 
 	free(dataHead);
 	return 0;
@@ -120,11 +120,11 @@ int calcRoute(
 		printNode(foundEndNode);*/
 		printf("Start routing\n");
     exploreNodes(headData, foundStartNode, typology);
+		printf("Result Distance is: %lf\n", foundEndNode->minDistance);
 	}
 	else
 		printf("Start or end Node not found!\n");
 
-	printf("Result Distance is: %lf\n", foundEndNode->minDistance);
 	return 0;
 }
 
