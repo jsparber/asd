@@ -30,6 +30,7 @@ typedef struct tList {
   struct tList *next;
 } tList;
 
+int readInput(char []);
 int printResult(tNode *, tNode *);
 tNode * removeMinListEl(tList **);
 int calcDistance(tArc *, tNode *, int); 
@@ -52,17 +53,35 @@ tNode* loadDB(FILE *);
 
 int main () {
 	FILE *inputDB;
+  char startNode[STRING_LENGTH];
+  char endNode[STRING_LENGTH];
+  int typology;
 	tNode *dataHead = NULL;
 	inputDB = fopen("database.txt","r"); 
 	dataHead = loadDB(inputDB);
 	fclose(inputDB);
 	insertArcDest(dataHead, dataHead, dataHead->arc);
-	calcRoute(dataHead, "v_e\n", "v_d\n", 0);
+  printf("Enter the start node\n");
+  readInput(startNode);
+  printf("Enter the end node\n");
+  readInput(endNode);
+  printf("Enter the typology\n");
+  scanf("%d", &typology);
+  /*printf("'%s''%s'\n", startNode, endNode);*/
+	calcRoute(dataHead, startNode, endNode, typology);
 
 	free(dataHead);
 	return 0;
 }
 
+
+int readInput(char string[]) {
+  int i;
+  for (i = 0; i < STRING_LENGTH && string[i-1] != '\n'; i++)
+    string[i] = getchar();
+  string[i-1] = '\0';
+  return 0;
+}
 tNode* loadDB(FILE *inputDB) {
 	int i;
 	int error = false;
@@ -137,10 +156,11 @@ int printResult(tNode *startNode, tNode *endNode) {
 	tNode *node;
 	printf("Route:\n");
 	for (node = endNode; node != startNode; node = node->parent)
-		printf("\t%s", node->parent->node);
+		printf("\t%s\n", node->parent->node);
 	printf("Result Distance is: %lf\n", endNode->minDistance);
 	return 0;
 }
+
 int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
   tNode *node;
   tArc *arc;
@@ -152,7 +172,7 @@ int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
 		printf("Node of not explored list %s", list->node->node);*/
   while (notExploredList != NULL) {
       node = removeMinListEl(&notExploredList);
-			printf("Node token form the not explored list %s", node->node);
+			/*printf("Node token form the not explored list %s", node->node);*/
 	//for (list = notExploredList; list != NULL; list = list->next)
 		//printf("Node of not explored list %s", list->node->node);
     for (arc = node->arc; arc != NULL; arc = arc->next) {
@@ -188,7 +208,7 @@ tNode * removeMinListEl(tList **list) {
 		*list = el->next;
 	else
 		precEl->next = el->next;
-  printf("minDistace %lf\n", minDistance);
+  /*printf("minDistace %lf\n", minDistance);*/
 	free(el);
   return node;
 }
@@ -217,7 +237,7 @@ int calcDistance(tArc *arc, tNode *node, int typology) {
  if (arc->dest->minDistance > node->minDistance + arc->distance[typology]) {
    arc->dest->minDistance = node->minDistance + arc->distance[typology];
 	 arc->dest->parent = node;
-   printf("After %lf\n", arc->dest->minDistance);
+   /*printf("After %lf\n", arc->dest->minDistance);*/
  }
  return 0;
 } 
@@ -228,7 +248,7 @@ int findNodeByAddr(tList *head, tNode *node) {
 
 	if (head != NULL) {
   	if (head->node == node) {
-			printf("Found ...\n");
+			/*printf("Found ...\n");*/
     	res = true;
 		}
   	else {
@@ -356,7 +376,7 @@ int getNodeName(FILE *inputDB, char node[]) {
 		i++;
 	}
 	while (node[i - 1] != ' ' && node[i - 1] != '\n' && !error);
-	node[i - 1] = '\n';
+	node[i - 1] = '\0';
 
 	return error;
 }
