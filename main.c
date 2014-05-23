@@ -120,6 +120,29 @@ tNode* loadDB(FILE *inputDB) {
 	return (!error) ? DataHead : NULL;
 }
 
+int calcElMedian(tNode *dataHead, int median) {
+  /*should be random*/
+  int x = 3;
+  int i;
+  tList * minorList;
+  tList * equalList;
+  tList * majorList;
+  tNode * node;
+  for (node = dataHead, i = 0; node != NULL; node = node->next, i++) {
+    if (node->minDistance < randomMinDistance)
+      addList(minorList, node);
+    else if ( node->minDistance == randomMinDistance)
+      addList(equalList, node);
+    else if ( node->minDistance > randomMinDistance)
+      addList(majorList, node);
+  }
+  if (median < listLength(minorList))
+      return calElMedian(minorList, median);
+  else if (median < listLength(equalList) + listLenght(majorList))
+      return calElMedian(majorList, median - );
+
+  :
+}
 int calcDistanceAverage(tNode * dataHead) {
 
   tNode * el;
