@@ -30,6 +30,7 @@ typedef struct tList {
   struct tList *next;
 } tList;
 
+int calcDistanceAverage(tNode *);
 int readInput(char []);
 int printResult(tNode *, tNode *);
 tNode * removeMinListEl(tList **);
@@ -69,8 +70,9 @@ int main () {
   scanf("%d", &typology);
   /*printf("'%s''%s'\n", startNode, endNode);*/
 	calcRoute(dataHead, startNode, endNode, typology);
-
-	free(dataHead);
+  calcDistanceAverage(dataHead);
+  for (dataHead = dataHead; dataHead != NULL; dataHead = dataHead->next)
+	  free(dataHead);
 	return 0;
 }
 
@@ -118,6 +120,21 @@ tNode* loadDB(FILE *inputDB) {
 	return (!error) ? DataHead : NULL;
 }
 
+int calcDistanceAverage(tNode * dataHead) {
+
+  tNode * el;
+  int i;
+  double averageDistance;
+  printf("All nodes\n");
+  for (el = dataHead, i = 0; el != NULL; el = el->next, i++) {
+    averageDistance += el->minDistance;
+  }
+  averageDistance /= i;
+     
+  printf("Average Distance is: %lf\n", averageDistance);
+	//calcRoute(dataHead, startNode, endNode, typology);
+  return 0;
+}
 int clearDistances(tNode *headData, tNode *endNode) {
   tNode *node;
   for (node = headData; node != NULL; node = node->next) {
@@ -144,7 +161,6 @@ int calcRoute(
 		printf("Start routing\n");
     exploreNodes(headData, foundStartNode, typology);
 		printResult(foundStartNode, foundEndNode);
-		//printf("Result Distance is: %lf\n", foundEndNode->minDistance);
 	}
 	else
 		printf("Start or end Node not found!\n");
