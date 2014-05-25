@@ -98,7 +98,7 @@ int main () {
   return 0;
 }
 
-
+/* Reads the node name form the user input*/
 int readInput(char string[]) {
   int i;
   for (i = 0; i < STRING_LENGTH && string[i-1] != '\n'; i++)
@@ -106,6 +106,8 @@ int readInput(char string[]) {
   string[i-1] = '\0';
   return 0;
 }
+
+/* pares the input file and saves its conntent to mem and return the start addr of the struct*/
 tNode* loadDB(FILE *inputDB) {
   int i;
   int error = false;
@@ -170,6 +172,7 @@ tNode* loadDB(FILE *inputDB) {
   return (!error) ? DataHead : NULL;
 }
 
+/* This function is a implementation of quickselect and select the median element of the nodeList */
 double calcElMedian(tList *nodeList, int median) {
   /*should be random*/
   int x = listLength(nodeList);
@@ -211,12 +214,15 @@ double calcElMedian(tList *nodeList, int median) {
   return result;
 }
 
+/* liberates the unuesd list*/
 int freeList(tList * list) {
   if (list != NULL)
     freeList(list->next);
   free(list);
   return 0;
 }
+
+/* returns the minDistance of the xted element of nodeList */
 double getMinDistance(tList *nodeList, int x) {
   int i = 1;
   tList *listEl = nodeList;
@@ -233,6 +239,7 @@ int listLength(tList *list) {
     return listLength(list->next) + 1;
 }
 
+/* adds a node the specificet list */
 int addList(tList **list, tNode *node) {
   tList *listEl;
   tList *newListEl;
@@ -248,6 +255,8 @@ int addList(tList **list, tNode *node) {
   }
   return 0;
 }
+
+/* calculates the average distance and calles calcElMedian()*/
 int calcDistanceAverage(tNode * dataHead) {
   tNode * el;
   tList *nodeList = NULL;
@@ -260,7 +269,7 @@ int calcDistanceAverage(tNode * dataHead) {
   }
   averageDistance /= i;
 
-  printf("Average Distance is: %lf\n", averageDistance);
+  printf("Average distance is: %lf\n", averageDistance);
   for (el = dataHead; el != NULL; el = el->next) {
     if (el->minDistance != 0.0)
       addList(&nodeList, el);
@@ -275,6 +284,7 @@ int calcDistanceAverage(tNode * dataHead) {
   return 0;
 }
 
+/* sets all minDistance of each node to MAX_DISTANCE expept the endNode*/
 int clearDistances(tNode *headData, tNode *endNode) {
   tNode *node;
   for (node = headData; node != NULL; node = node->next) {
@@ -285,6 +295,7 @@ int clearDistances(tNode *headData, tNode *endNode) {
   return 0;
 }
 
+/* validates the user input and checks if the nodes exist and calls exploreNode */
 int calcRoute(tNode *headData, char startNode[], char endNode[], int typology) {
   tNode *foundStartNode;
   tNode *foundEndNode;
@@ -301,10 +312,10 @@ int calcRoute(tNode *headData, char startNode[], char endNode[], int typology) {
     printf("Start or end Node not found!\n");
     error = true;
   }
-
   return error;
 }
 
+/* prints the resulting route to the standart output*/
 int printResult(tNode *startNode, tNode *endNode) {
   tNode *node;
   printf("Route:\n");
@@ -314,6 +325,7 @@ int printResult(tNode *startNode, tNode *endNode) {
   return 0;
 }
 
+/* this funtion is a implementation of dijkstra algorithm*/
 int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
   tNode *node;
   tArc *arc;
@@ -331,6 +343,7 @@ int exploreNodes(tNode * dataHead, tNode * startNode, int typology) {
 
   return 0;
 }
+/* removes form list the element with the lowest minDistance*/
 tNode * removeMinListEl(tList **list) {
   tNode *node = NULL; 
   tList *el;
@@ -378,6 +391,7 @@ tList * createList(tNode *dataHead) {
   }
   return firstListEl;
 }
+
 int calcDistance(tArc *arc, tNode *node, int typology) {
   if (arc->dest->minDistance > node->minDistance + arc->distance[typology]) {
     arc->dest->minDistance = node->minDistance + arc->distance[typology];
@@ -386,6 +400,7 @@ int calcDistance(tArc *arc, tNode *node, int typology) {
   return 0;
 } 
 
+/* finds a node by its addr and returns true when the node is found*/
 int findNodeByAddr(tList *head, tNode *node) {
   int res = false;
 
@@ -403,6 +418,7 @@ int findNodeByAddr(tList *head, tNode *node) {
   return res;
 }
 
+/* adds to every arc the dest node addr */
 int insertArcDest(tNode * dataHead, tNode * node, tArc * arc) {
   if (arc != NULL) {
     arc->dest = findNode(dataHead, arc->node);
@@ -417,6 +433,7 @@ int insertArcDest(tNode * dataHead, tNode * node, tArc * arc) {
   return 0;
 }
 
+/* searchs for a node by name and returns its addrs*/
 tNode * findNode(tNode *node, char nodeName[]) {
   tNode * foundNode = NULL;
   if (strcmp(nodeName, node->node) == 0) {
@@ -436,6 +453,7 @@ int printAllNode(tNode *node) {
     printAllNode(node->next);
   return 0;
 }
+
 int printNode(tNode *node) {
   int i;
   printf("Arcs of: ");
@@ -460,6 +478,7 @@ int printArc(tArc *arc) {
   return 0;
 }
 
+/* adds a new node to the node list */
 int addNode(tNode **DataHead, tNode *newNode) {
   tNode *curEl;
   if (*DataHead == NULL) {
@@ -472,6 +491,7 @@ int addNode(tNode **DataHead, tNode *newNode) {
   return 0;
 }
 
+/* adds a new arc to the arc list of a node */
 int addArc(tArc **DataHead, tArc *newNode) {
   tArc *curEl;
   if ( *DataHead == NULL ) {
@@ -484,6 +504,7 @@ int addArc(tArc **DataHead, tArc *newNode) {
   return 0;
 }
 
+/* reads the distances form input file and return true if ther are three values*/
 int getDistance(FILE *inputDB, double distance[]) {
   int res;
   res = fscanf(inputDB, "%lf %lf %lf\n",
@@ -492,6 +513,7 @@ int getDistance(FILE *inputDB, double distance[]) {
   return (res == 3) ? 0 : true;
 }
 
+/* reades the name of the arc form input file and makes a spare validation*/
 int getNodeName(FILE *inputDB, char node[]) {
   int i = 0;
   int error = false;
