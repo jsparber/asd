@@ -64,21 +64,25 @@ int main () {
   int typology;
 	tNode *dataHead = NULL;
 	inputDB = fopen("database.txt","r"); 
-	dataHead = loadDB(inputDB);
-	fclose(inputDB);
-  if (dataHead != NULL) {
-    insertArcDest(dataHead, dataHead, dataHead->arc);
-    printf("Enter the start node\n");
-    readInput(startNode);
-    printf("Enter the end node\n");
-    readInput(endNode);
-    printf("Enter the typology\n");
-    scanf("%d", &typology);
-    /*printf("'%s''%s'\n", startNode, endNode);*/
-    calcRoute(dataHead, startNode, endNode, typology);
-    calcDistanceAverage(dataHead);
-    for (dataHead = dataHead; dataHead != NULL; dataHead = dataHead->next)
-      free(dataHead);
+  if (inputDB == NULL)
+    printf("Please verify that database.txt is present.\n");
+  else {
+    dataHead = loadDB(inputDB);
+    fclose(inputDB);
+    if (dataHead != NULL) {
+      insertArcDest(dataHead, dataHead, dataHead->arc);
+      printf("Enter the start node\n");
+      readInput(startNode);
+      printf("Enter the end node\n");
+      readInput(endNode);
+      printf("Enter the typology\n");
+      scanf("%d", &typology);
+      /*printf("'%s''%s'\n", startNode, endNode);*/
+      calcRoute(dataHead, startNode, endNode, typology);
+      calcDistanceAverage(dataHead);
+      for (dataHead = dataHead; dataHead != NULL; dataHead = dataHead->next)
+        free(dataHead);
+    }
   }
   return 0;
 }
@@ -147,7 +151,7 @@ tNode* loadDB(FILE *inputDB) {
       }
       addNode(&DataHead, newNode);
     }
-	}
+  }
   if (!error) {
 	  printf("Got this Data:\n");
 	  printAllNode(DataHead);
