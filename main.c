@@ -33,7 +33,7 @@ typedef struct tList {
 double getMinDistance(tList *, int);
 int addList(tList **, tNode *);
 int listLength(tList *);
-int calcElMedian(tList *, int);
+double calcElMedian(tList *, int);
 int calcDistanceAverage(tNode *);
 int readInput(char []);
 int printResult(tNode *, tNode *);
@@ -124,21 +124,25 @@ tNode* loadDB(FILE *inputDB) {
 	return (!error) ? DataHead : NULL;
 }
 
-int calcElMedian(tList *nodeList, int median) {
+double calcElMedian(tList *nodeList, int median) {
+  printf("Start function median: %d\n", median);
   /*should be random*/
-  int x = 3;
-	double randomMinDistance = getMinDistance(nodeList, x);
-  int i;
-  tList * minorList;
-  tList * equalList;
-  tList * majorList;
+  int x = listLength(nodeList);
+	double randomMinDistance = getMinDistance(nodeList, (int)x/2);
+
+  printf("Random Element: [%d], distance %lf\n", x/2, randomMinDistance);
+  tList * minorList = NULL;
+  tList * equalList = NULL;
+  tList * majorList = NULL;
   tList * listEl;
 	int lengthMinorList;
 	int lengthEqualList;
 	int lengthMajorList;
 
-	printf("2Test\n");
-  for (listEl = nodeList, i = 0; listEl != NULL; listEl = listEl->next, i++) {
+	/*printf("2Test%lf\n", randomMinDistance );*/
+  for (listEl = nodeList; listEl != NULL; listEl = listEl->next) {
+	/*printf("Test i: %d\n", i);*/
+    /*printf("%s\n", listEl->node->node);*/
     if (listEl->node->minDistance < randomMinDistance)
       addList(&minorList, listEl->node);
     else if (listEl->node->minDistance == randomMinDistance)
@@ -146,21 +150,37 @@ int calcElMedian(tList *nodeList, int median) {
     else if (listEl->node->minDistance > randomMinDistance)
       addList(&majorList, listEl->node);
   }
-	printf("Test\n");
 	lengthMinorList = listLength(minorList);
 	lengthEqualList = listLength(equalList);
 	lengthMajorList = listLength(majorList);
-	printf("Test\n");
-  if (median < lengthMinorList)
+  printf("MinorList\n");
+  for (listEl = minorList; listEl != NULL; listEl = listEl->next)
+    printf("El: %lf\n", listEl->node->minDistance);
+  printf("EqualList\n");
+  for (listEl = equalList; listEl != NULL; listEl = listEl->next)
+    printf("El: %lf\n", listEl->node->minDistance);
+  printf("MajorList\n");
+  for (listEl = majorList; listEl != NULL; listEl = listEl->next)
+    printf("El: %lf\n", listEl->node->minDistance);
+	printf("Lengths: %d, %d, %d\n", lengthMinorList, lengthEqualList, lengthMajorList);
+  printf("Median: %d\n", median);
+  if (median <= lengthMinorList) {
+      printf("Minor\t\thello\n");
       return calcElMedian(minorList, median);
-  else if (median < lengthEqualList + listLength(majorList))
-      return calcElMedian(majorList, median - lengthEqualList - lengthMajorList);
-	else
-		return x;
+  }
+  else if (median > lengthMinorList + lengthEqualList) {
+      printf("Major: %d \t\thello\n",median - lengthMinorList - lengthEqualList);
+      return calcElMedian(majorList, median - lengthMinorList - lengthEqualList);
+  }
+	else {
+    printf("Other: %lf\t\thello\n", randomMinDistance);
+		return randomMinDistance;
+  }
+  return 0;
 }
 
 double getMinDistance(tList *nodeList, int x) {
-	int i = 0;
+	int i = 1;
 	tList *listEl = nodeList;
 	while (listEl != NULL && i < x) {
 		i++;
@@ -170,7 +190,7 @@ double getMinDistance(tList *nodeList, int x) {
 }
 int listLength(tList *list) {
 	if(list == NULL)
-		return 1;
+		return 0;
 	else
 		return listLength(list->next) + 1;
 }
@@ -178,10 +198,11 @@ int listLength(tList *list) {
 int addList(tList **list, tNode *node) {
 	tList *listEl;
 	tList *newListEl;
-	newListEl = malloc(sizeof(tList));
+	newListEl = (tList *)malloc(sizeof(tList));
 	newListEl->node = node;
 	newListEl->next = NULL;
 	if ( *list == NULL ) {
+    /*printf("newList");*/
 		*list = newListEl;
 	}
 	else {
@@ -192,20 +213,34 @@ int addList(tList **list, tNode *node) {
 }
 int calcDistanceAverage(tNode * dataHead) {
   tNode * el;
-	tList *nodeList;
+	tList *nodeList = NULL;
+  int length;
+  double median;
   int i;
   double averageDistance;
   printf("All nodes\n");
   for (el = dataHead, i = 0; el != NULL; el = el->next, i++) {
     averageDistance += el->minDistance;
+    printf("Distance %s: %lf\n", el->node, el->minDistance);
   }
   averageDistance /= i;
      
   printf("Average Distance is: %lf\n", averageDistance);
-	nodeList = createList(dataHead);
-	calcElMedian(nodeList, 1);
+	//nodeList = createList(dataHead);
+  for (el = dataHead; el != NULL; el = el->next) {
+    if (el->minDistance != 0.0)
+      addList(&nodeList, el);
+  }
+
+  length = listLength(nodeList);
+  if (length % 2 == 0)
+    median = (calcElMedian(nodeList, length/2) + calcElMedian(nodeList, length/2 + 1)) / 2;
+  else
+	  median = calcElMedian(nodeList, length/2 + 1);
+  printf("Median is %lf\n", median);
   return 0;
 }
+
 int clearDistances(tNode *headData, tNode *endNode) {
   tNode *node;
   for (node = headData; node != NULL; node = node->next) {
