@@ -30,6 +30,7 @@ typedef struct tList {
   struct tList *next;
 } tList;
 
+int freeList(tList *);
 double getMinDistance(tList *, int);
 int addList(tList **, tNode *);
 int listLength(tList *);
@@ -66,20 +67,20 @@ int main () {
 	dataHead = loadDB(inputDB);
 	fclose(inputDB);
   if (dataHead != NULL) {
-	insertArcDest(dataHead, dataHead, dataHead->arc);
-  printf("Enter the start node\n");
-  readInput(startNode);
-  printf("Enter the end node\n");
-  readInput(endNode);
-  printf("Enter the typology\n");
-  scanf("%d", &typology);
-  /*printf("'%s''%s'\n", startNode, endNode);*/
-	calcRoute(dataHead, startNode, endNode, typology);
-  calcDistanceAverage(dataHead);
-  for (dataHead = dataHead; dataHead != NULL; dataHead = dataHead->next)
-	  free(dataHead);
+    insertArcDest(dataHead, dataHead, dataHead->arc);
+    printf("Enter the start node\n");
+    readInput(startNode);
+    printf("Enter the end node\n");
+    readInput(endNode);
+    printf("Enter the typology\n");
+    scanf("%d", &typology);
+    /*printf("'%s''%s'\n", startNode, endNode);*/
+    calcRoute(dataHead, startNode, endNode, typology);
+    calcDistanceAverage(dataHead);
+    for (dataHead = dataHead; dataHead != NULL; dataHead = dataHead->next)
+      free(dataHead);
   }
-	return 0;
+  return 0;
 }
 
 
@@ -91,60 +92,60 @@ int readInput(char string[]) {
   return 0;
 }
 tNode* loadDB(FILE *inputDB) {
-	int i;
-	int error = false;
-	int maxNode = 0; 
-	int node;
-	int maxArc;
+  int i;
+  int error = false;
+  int maxNode = 0; 
+  int node;
+  int maxArc;
   int res;
-	tNode *DataHead = NULL;
-	tNode *newNode = NULL;
-	tArc *newArc = NULL;
-	res = fscanf(inputDB, "%d", &maxNode);
+  tNode *DataHead = NULL;
+  tNode *newNode = NULL;
+  tArc *newArc = NULL;
+  res = fscanf(inputDB, "%d", &maxNode);
   if (res == 0) {
     printf("Error: wrong max node nummber\n");
     error = true;
   }
 
-	if (fgetc(inputDB) != '\n')
-		error = true;
+  if (fgetc(inputDB) != '\n')
+    error = true;
 
-	for (node = 0; node < maxNode && !error; node++) {
-		res = fscanf(inputDB, "%d\n", &maxArc);
+  for (node = 0; node < maxNode && !error; node++) {
+    res = fscanf(inputDB, "%d\n", &maxArc);
     if (res == 0) {
       printf("Error: wrong max arc nummber\n");
       error = true;
     }
     else {
-		newNode = (tNode *)malloc(sizeof(tNode));
-    newNode->minDistance = 0.0;
-		newNode->next = NULL;
-		for (i = 0; i < maxArc && !error; i++) {
-			newArc = (tArc *)malloc(sizeof(tArc));
-			newArc->dest = NULL;
-			getNodeName(inputDB, newNode->node);
-      if (newNode->node[0] != 'v') {
-        printf("Error: wrong node name: %s\n", newNode->node);
-        error = true;
-        free(newNode);
-      }
-      else {
-			  getNodeName(inputDB, newArc->node);
-        if (newArc->node[0] != 'v') {
-          printf("Error: wrong arc destination of %s\n", newNode->node);
+      newNode = (tNode *)malloc(sizeof(tNode));
+      newNode->minDistance = 0.0;
+      newNode->next = NULL;
+      for (i = 0; i < maxArc && !error; i++) {
+        newArc = (tArc *)malloc(sizeof(tArc));
+        newArc->dest = NULL;
+        getNodeName(inputDB, newNode->node);
+        if (newNode->node[0] != 'v') {
+          printf("Error: wrong node name: %s\n", newNode->node);
           error = true;
           free(newNode);
         }
         else {
-			    error = getDistance(inputDB, newArc->distance);
-          if (error != true)
-			      addArc(&newNode->arc, newArc);
-          else
+          getNodeName(inputDB, newArc->node);
+          if (newArc->node[0] != 'v') {
+            printf("Error: wrong arc destination of %s\n", newNode->node);
+            error = true;
             free(newNode);
+          }
+          else {
+            error = getDistance(inputDB, newArc->distance);
+            if (error != true)
+              addArc(&newNode->arc, newArc);
+            else
+              free(newNode);
+          }
         }
       }
-		}
-		addNode(&DataHead, newNode);
+      addNode(&DataHead, newNode);
     }
 	}
   if (!error) {
@@ -177,17 +178,30 @@ double calcElMedian(tList *nodeList, int median) {
 	lengthMinorList = listLength(minorList);
 	lengthEqualList = listLength(equalList);
   if (median <= lengthMinorList) {
+      freeList(equalList); 
+      freeList(majorList);
       return calcElMedian(minorList, median);
   }
   else if (median > lengthMinorList + lengthEqualList) {
+      freeList(minorList);
+      freeList(equalList); 
       return calcElMedian(majorList, median - lengthMinorList - lengthEqualList);
   }
 	else {
+    freeList(minorList);
+    freeList(equalList); 
+    freeList(majorList);
 		return randomMinDistance;
   }
   return 0;
 }
 
+int freeList(tList * list) {
+  if (list != NULL)
+    freeList(list->next);
+    free(list);
+  return 0;
+}
 double getMinDistance(tList *nodeList, int x) {
 	int i = 1;
 	tList *listEl = nodeList;
