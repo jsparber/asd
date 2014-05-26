@@ -178,7 +178,7 @@ double calcElMedian(tList *nodeList, int median) {
   int x = listLength(nodeList);
   int lengthMinorList;
   int lengthEqualList;
-  double randomMinDistance = getMinDistance(nodeList, (int)x/2);
+  double randomMinDistance = getMinDistance(nodeList, (int) (x * ((double)rand() / RAND_MAX)));
   double result;
   tList * minorList = NULL;
   tList * equalList = NULL;
