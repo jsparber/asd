@@ -68,19 +68,46 @@ int main (int argNo, char *argC[]){
 	char endNode[STRING_LENGTH];
 	int typology;
 	int error = true;
+	int i;
 	tNode *dataHead = NULL;
 	tList *nodeList = NULL;
 	double median;
 	double averageDistance = 0;
-	clock_t startTime;
-	clock_t endTime;
+	float startTime;
+	float endTime;
 	srand(time(NULL));
-	if (argNo - 1 > 0 && strcmp(argC[1], "test") == 0) {
+	if (argNo - 1 > 0 ) {
 		printf("Start test\n");
-		nodeList = generateRandomList(10001);
-		startTime = clock();
-		endTime = clock();
-		printf("StartTime: %f, EndTime: %f, Difference: %f s\n", (float)startTime / CLOCKS_PER_SEC, (float)endTime / CLOCKS_PER_SEC, ((float)endTime - (float)startTime) / CLOCKS_PER_SEC);
+		if (strcmp(argC[1], "test1") == 0) {
+			i = 100;
+			printf("Run time of average calculation[ms]:\n");
+			while (i < 10000) {
+				nodeList = generateRandomList(i);
+				startTime = (float)clock();
+				averageDistance = calcDistanceAverage(nodeList);
+				endTime = (float)clock();
+				/*printf("Average distance is: %lf\n", averageDistance);*/
+				printf("%f, %d\n", ((endTime - startTime) / CLOCKS_PER_SEC) * 1000, i);
+				i += 100;
+				freeList(nodeList);
+			}
+		}
+		else if (strcmp(argC[1], "test2") == 0) {
+			printf("Run time of median calculation[s]:\n");
+			i = 100;
+			while (i < 10000) {
+				nodeList = generateRandomList(i);
+				startTime = (float)clock();
+				median = calcMedian(nodeList);
+				endTime = (float)clock();
+				/*printf("Median is %lf\n", median);*/
+				printf("%f, %d\n", (endTime - startTime) / CLOCKS_PER_SEC, i);
+				i += 100;
+				i++;
+				freeList(nodeList);
+			}
+		}
+
 	}
 	else {
 		inputDB = fopen("database.txt","r"); 
@@ -297,7 +324,7 @@ tList * generateRandomList(int maxToTest) {
 	int i;
 	for (i = 0; i < maxToTest; i++) {
 		randomNo = 100.0 * ((double)rand() / RAND_MAX);
-		printf("Number: %lf\n", randomNo);
+		/*printf("Number: %lf\n", randomNo);*/
 		newNode = (tNode *)malloc(sizeof(tNode));
 		newNode->minDistance = randomNo;
 		addList(&list, newNode);
@@ -305,18 +332,22 @@ tList * generateRandomList(int maxToTest) {
 	return list;
 }
 
-/* calculates the average distance and calles findElement()*/
+/* calculates the average distance*/
 double calcDistanceAverage(tList *list) {
 	tList * el;
 	int i;
 	double averageDistance = 0;
-	for (el = list, i = 0; el != NULL; el = el->next, i++)
+	for (el = list, i = 0; el != NULL; el = el->next, i++) {
+		/*printf("Distance %lf\n", el->node->minDistance);*/
 		averageDistance += el->node->minDistance;
+	}
 
 	averageDistance /= i;
 	return averageDistance;
 }
 
+/* calles the findElement to find the middle element
+ * if list length is even it return medium of length/2 and length/2 + 1 */
 double calcMedian(tList *nodeList) {
 	int length;
 	double median;
@@ -426,6 +457,7 @@ tNode * removeMinListEl(tList **list) {
 	return node;
 }
 
+/* creats a list with all nodes */
 tList * createList(tNode *dataHead) {
 	tNode *node;
 	tList *firstListEl = NULL;
