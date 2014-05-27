@@ -1,9 +1,10 @@
 /* Julian Sparber 2014
-   Projcet for ASD summer 2014 */
+	 Projcet for ASD summer 2014 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define true 1
 #define false 0
@@ -11,25 +12,26 @@
 #define MAX_DISTANCE 255
 
 typedef struct tArc {
-  char node[STRING_LENGTH];
-  double distance[3];
-  struct tArc *next;
-  struct tNode *dest;
+	char node[STRING_LENGTH];
+	double distance[3];
+	struct tArc *next;
+	struct tNode *dest;
 } tArc;
 
 typedef struct tNode {
-  char node[STRING_LENGTH];
-  tArc *arc;
-  struct tNode *next;
-  double minDistance;
-  struct tNode *parent;
+	char node[STRING_LENGTH];
+	tArc *arc;
+	struct tNode *next;
+	double minDistance;
+	struct tNode *parent;
 } tNode;
 
 typedef struct tList {
-  tNode *node;
-  struct tList *next;
+	tNode *node;
+	struct tList *next;
 } tList;
 
+tList * generateRandomList();
 int readTypology();
 int freeList(tList *);
 double getMinDistance(tList *, int);
@@ -58,36 +60,66 @@ int addNode(tNode **, tNode *);
 int getNodeName(FILE *, char *);
 tNode* loadDB(FILE *);
 
-int main () {
-  FILE *inputDB;
-  char startNode[STRING_LENGTH];
-  char endNode[STRING_LENGTH];
-  int typology;
-  int error = true;
-  tNode *dataHead = NULL;
-  inputDB = fopen("database.txt","r"); 
-  if (inputDB == NULL)
-    printf("Please verify that database.txt is present.\n");
-  else {
-    dataHead = loadDB(inputDB);
-    fclose(inputDB);
-    if (dataHead != NULL) {
-      insertArcDest(dataHead, dataHead, dataHead->arc);
-      while (error) {
-        printf("Enter the start node\n");
-        readInput(startNode);
-        printf("Enter the end node\n");
-        readInput(endNode);
-        printf("Enter the typology\n");
-				typology = readTypology();
-        error = calcRoute(dataHead, startNode, endNode, typology);
-      }
-      calcDistanceAverage(dataHead);
-      for (dataHead = dataHead; dataHead != NULL; dataHead = dataHead->next)
-        free(dataHead);
-    }
-  }
-  return 0;
+int main (int argNo, char *argC[]){
+	FILE *inputDB;
+	char startNode[STRING_LENGTH];
+	char endNode[STRING_LENGTH];
+	int typology;
+	int error = true;
+	tNode *dataHead = NULL;
+	tList *el;
+	int i;
+	int length;
+	double median;
+	double averageDistance = 0;
+	clock_t startTime;
+	clock_t endTime;
+	tList *list = NULL;
+	srand(time(NULL));
+	if (argNo - 1 > 0 && strcmp(argC[1], "test") == 0) {
+		printf("Start test\n");
+		list = generateRandomList(10001);
+		startTime = clock();
+		for (el = list, i = 0; el != NULL; el = el->next, i++) {
+			averageDistance += el->node->minDistance;
+		}
+		averageDistance /= i;
+
+		printf("Average distance is: %lf\n", averageDistance);
+		length = listLength(list);
+		if (length % 2 == 0)
+			median = (calcElMedian(list, length/2) + calcElMedian(list, length/2 + 1)) / 2;
+		else
+			median = calcElMedian(list, length/2 + 1);
+		printf("Median is %lf\n", median);
+		endTime = clock();
+		printf("StartTime: %f, EndTime: %f, Difference: %f s\n", (float)startTime / CLOCKS_PER_SEC, (float)endTime / CLOCKS_PER_SEC, ((float)endTime - (float)startTime) / CLOCKS_PER_SEC);
+	}
+	else {
+		inputDB = fopen("database.txt","r"); 
+		if (inputDB == NULL)
+			printf("Please verify that database.txt is present.\n");
+		else {
+			dataHead = loadDB(inputDB);
+			fclose(inputDB);
+			if (dataHead != NULL) {
+				insertArcDest(dataHead, dataHead, dataHead->arc);
+				while (error) {
+					printf("Enter the start node\n");
+					readInput(startNode);
+					printf("Enter the end node\n");
+					readInput(endNode);
+					printf("Enter the typology\n");
+					typology = readTypology();
+					error = calcRoute(dataHead, startNode, endNode, typology);
+				}
+				calcDistanceAverage(dataHead);
+				for (dataHead = dataHead; dataHead != NULL; dataHead = dataHead->next)
+					free(dataHead);
+			}
+		}
+	}
+	return 0;
 }
 
 /* reads the typology form the user input*/
@@ -186,7 +218,6 @@ tNode* loadDB(FILE *inputDB) {
 
 /* This function is a implementation of quickselect and select the median element of the nodeList */
 double calcElMedian(tList *nodeList, int median) {
-	/*should be random*/
 	int x = listLength(nodeList);
 	int lengthMinorList;
 	int lengthEqualList;
@@ -266,6 +297,21 @@ int addList(tList **list, tNode *node) {
 		listEl->next = newListEl;
 	}
 	return 0;
+}
+/* this function generates a list with random nummbers to test the complexity*/
+tList * generateRandomList(int maxToTest) {
+	tList *list = NULL;
+	tNode *newNode;
+	double randomNo;
+	int i;
+	for (i = 0; i < maxToTest; i++) {
+		randomNo = 100.0 * ((double)rand() / RAND_MAX);
+		printf("Number: %lf\n", randomNo);
+		newNode = (tNode *)malloc(sizeof(tNode));
+		newNode->minDistance = randomNo;
+		addList(&list, newNode);
+	}
+	return list;
 }
 
 /* calculates the average distance and calles calcElMedian()*/
