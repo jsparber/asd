@@ -2,6 +2,7 @@
 \usepackage{listings}
 \hyphenpenalty=10000
 
+\usepackage{graphicx}
 \begin{document}
 \begin{titlepage}
 
@@ -64,7 +65,7 @@ Valerio \textsc{Freschi} % Supervisor's Name
 
 \end{titlepage}
 
-\section{Specifying the Problem}
+\section{Specifica del problema}
 	Si supponga di elaborare i dati relativi ad un grafo. Le informazioni associate al problema siano: un insieme di vertici (con nomi specifcati da stringhe prive di spazi) e un insieme di archi caratterizzati da una tripla di distanze d1, d2, d3 (una tripla di numeri reali).
 	\subsection{}
 	Acquisisce da file le informazioni relative al grafo. Il formato del file \`{e} del tipo:\\
@@ -102,36 +103,57 @@ monitor tale percorso e la relativa distanza.
 	Per quanto riguarda il punto 4 si deve anche verificare sperimentalmente la complessit\`{a} delcalcolo di media e mediana, generando casualmente una sequenza di distanze (di N numeri reali) da fornire come input all’algoritmo per valori crescenti di N.
 
 	\newpage
-\section{Analyzing the Problem}
-	
-	
-	\newpage			
-\section{Designing the Algorithm}
-
+\section{Progettazione dell problema}
+Ogni carattere letto dal file viene direttamente verificato se \`{e} ammesso. Il nodo e l'arco presso da ogni riga viene salvato in una struttura dinamica di tipo: \\
+\{\\
+\indent nome del nodo,\\
+\indent archi del nodo,\\
+\indent minima distanza,\\
+\indent parente del nodo,\\
+\indent nodo successivo; \\
+\}\\
+dove i archi sono salvati in una struttura di tipo:\\
+\{\\
+  nome del nodo di destinazione,\\
+  nodo di destinazione,\\
+  la tripla della distanza,\\
+  arco successivo;\\
+\}\\
+Un vertice sorgente, un vertice destinazione e una tipologia di distanze (d1 oppure d2 oppure d3) viene chiesto al utente.\\
+In questo grafo si tratta di distanze quindi è una buona occasione di aspettare che no chi sono dei archi di peso negativo. Ne consegue che l' algoritmo di Dijkstra è una buona scelta.\\
+La mediana è calcolato con quickselect, un algoritmo randomizzato che trova il k-esimo elemento di una struttura disordinata di grandezza n eseguendo O( n$^2$ ) confronti nel caso peggiore e O(n) nel caso ottimo. Quickselect è semplice da implementare è se ben implementata in pratica un po più veloce di heapselect.\\
+Al utente viene mostrato il percorso pi\`{u} breve tra sorgente e destinazione, la media e la mediana della distanze minime che separano tale vertice da tutti gli altri vertici del grafo
 	\newpage
-\section{Testing the program}
-
-	\newpage
-\section{Verifying the program}
-\lstset{numbers=left, tabsize=2, escapechar=?}
-\begin{lstlisting}
-{op ?$\geq $? 0 ?$\wedge $? 1 ?$\geq $? a ?$\geq $? 0 ?$\wedge $? 1 ?$\geq $? b ?$\geq $? 0}
-int res = 0;
-	
-	switch (op){P1}{
-		case 1:
-			res = a && b;
-			break;
-	{P2}
-{res = (a ?$\wedge $? b)}
-
-\end{lstlisting}
-P1 $\equiv $ 1 $\geq $ a $\geq $ 0 $\wedge $ 1 $\geq $ b $\geq $ 0\\
-P2 $\equiv $ op = 1 $\wedge $ 1 $\geq $ a $\geq $ 0 $\wedge $ 1 $\geq $ b $\geq $ 0 $\wedge $ res = (a $\wedge $ b)\\
+\section{Valutazione della complessit\`{a} del programma}
+Essendo che l' algoritmo in lavora si applica su strutture del tipo grafo, la complessità verrà espressa in 
+funzione del numero di vertici e di archi del grafo stesso. A questo scopo verrà indicato con $|$V$|$ il 
+numero di vertici e con $|$E$|$ (edges) il numero di tutti gli archi.\\
 \\
-
-
-
-
+La complessità del algoritmo di acquisizione:\\
+\indent T($|$V$|$, $|$E$|$) = 1+ $|$V$|$ + $|$E$|$ = O($|$V$|$ + $|$E$|$)\\
+La complessità del algoritmo per calcolare il percorso pi\`{u} breve tra due vertici(Algoritmo di Dijkstra):\\
+\indent T ($|$V $|$, $|$E$|$) = O($|$V $|$ · log $|$V $|$ + $|$E$|$)\\
+La complessità del algoritmo per calcolare la media:\\
+\indent T($|$V$|$, $|$E$|$) = O($|$V$|$)\\
+La complessità del algoritmo per calcolare la mediana(quickselect):\\
+\indent Caso ottimo:\\
+\indent \indent T($|$V$|$, $|$E$|$) = $|$V$|$ + $|$V$|$ + T($|$V$|$ / 2) = O($|$V$|$)\\
+\indent Caso pessimo:\\
+\indent \indent T($|$V$|$, $|$E$|$) = $|$V$|$ + $|$V$|$ + T($|$V$|$ - 1) = O($|$V$|$2)\\
+	\newpage
+\section{Valutazione sperimentalmente della complessit\`{a} del calcolo di media e mediana}
+Si vede anche nella valutazione sperimentale la complessit\`{a} O($|$V$|$) del calcolo della media.
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.80]{img/calcolo_media.png}
+\caption{complessit\`{a} del calcolo di media}
+\end{figure}
+\newpage
+Anche l'risultato dalla valutazione sperimentale del calcolo della mediana non porta inaspettato. Qui si vede l'confronto dal calcolo di media e di mediana. La complessit\`{a} varia molto perch\`{e} quickselect \`{e} randomizzato quindi dipende molto dalla partenza.
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=0.80]{img/calcolo_mediana.png}
+\caption{complessit\`{a} del calcolo di media(blue) e mediana(rosso)}
+\end{figure}
 
 \end{document}
