@@ -88,7 +88,7 @@ int main (int argNo, char *argC[]){
 				endTime = (float)clock();
 				/*printf("Average distance is: %lf\n", averageDistance);*/
 				printf("%f, %d\n", ((endTime - startTime) / CLOCKS_PER_SEC) * 1000, i);
-				i += 100;
+				i += 101;
 				freeList(nodeList);
 			}
 		}
@@ -101,9 +101,8 @@ int main (int argNo, char *argC[]){
 				median = calcMedian(nodeList);
 				endTime = (float)clock();
 				/*printf("Median is %lf\n", median);*/
-				printf("%f, %d\n", (endTime - startTime) / CLOCKS_PER_SEC, i);
-				i += 100;
-				i++;
+				printf("%f, %d\n", ((endTime - startTime) / CLOCKS_PER_SEC) * 1000, i);
+				i += 101;
 				freeList(nodeList);
 			}
 		}
