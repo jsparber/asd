@@ -14,44 +14,32 @@
 %	HEADING SECTIONS
 %----------------------------------------------------------------------------------------
 
-\textsc{\LARGE Universita}\\[1.5cm] % Name of your university/college
-\textsc{\Large applied computer science}\\[0.5cm] % Major heading such as course name
-\textsc{\large Algoritmi e Strutture Dati}\\[0.5cm] % Minor heading such as course title
 
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
 
 
-\HRule \\[0.4cm]
-{ \huge \bfseries Report}\\[0.2cm] % Title of your document
-\HRule \\[0.4cm]
-\textsc{\large Project for the 2013/2014 summer session}
-\\[0.5cm]
+%\HRule \\[0.4cm]
+{ \huge \bfseries Project Report}\\[1.2cm]
+%\HRule \\[0.4cm]
+
+{\LARGE Algoritmi e Strutture Dati}\\[0.5cm]
+{\large 2013/2014 summer session}
+\\[1.5cm]
+
+{\large Julian Sparber}\\[0.2cm]
+{\large matr. no.: 260324}\\[1cm]
 %----------------------------------------------------------------------------------------
 %	AUTHOR SECTION
 %----------------------------------------------------------------------------------------
 
-\begin{minipage}{\textwidth}
-\begin{flushleft}
-\emph{Student:}\\
-Julian \textsc{Sparber}\\ % Your name
-matric no: 260324
-\end{flushleft}
-\end{minipage}
-
-\begin{minipage}{\textwidth}
-\begin{flushright}
-\emph{Lecturer:} \\
-Valerio \textsc{Freschi} % Supervisor's Name
-\end{flushright}
-\end{minipage}\\[11cm]
 
 %----------------------------------------------------------------------------------------
 %	DATE SECTION
 %----------------------------------------------------------------------------------------
 
-{\large \today}\\[10cm] % Date, change the \today to a set date if you want to be precise
+%{\large \today}\\[10cm] % Date, change the \today to a set date if you want to be precise
 
 %----------------------------------------------------------------------------------------
 %	LOGO SECTION
@@ -95,61 +83,65 @@ Valerio \textsc{Freschi} % Supervisor's Name
 	\subsection{}
 	Inserisce i dati acquisiti in una opportuna struttura dati.
 	\subsection{}
-	Dati un vertice sorgente, uno destinazione e una tipologia di distanze (d1 oppure d2 oppure d3) inseriti dall’utente, calcola il percorso pi\`{u} breve tra sorgente e destinazione, mostrando a
+	Dati un vertice sorgente, uno destinazione e una tipologia di distanze (d1 oppure d2 oppure d3) inseriti dall'utente, calcola il percorso pi\`{u} breve tra sorgente e destinazione, mostrando a
 monitor tale percorso e la relativa distanza.
 	\subsection{}
-	Dato un vertice specificato dall’utente, calcola la media e la mediana della distanze minime che separano tale vertice da tutti gli altri vertici del grafo, in base alle tipologie di distanza d1, d2 e d3.\\ \\
-	Per quanto riguarda l’analisi teorica si devono studiare le complessit\`{a} degli algoritmi di acquisizione del file (punto 2), calcolo del percorso pi\`{u} breve tra due vertici (punto 3) e calcolo di media e mediana (punto 4).\\
-	Per quanto riguarda il punto 4 si deve anche verificare sperimentalmente la complessit\`{a} delcalcolo di media e mediana, generando casualmente una sequenza di distanze (di N numeri reali) da fornire come input all’algoritmo per valori crescenti di N.
+	Dato un vertice specificato dall'utente, calcola la media e la mediana della distanze minime che separano tale vertice da tutti gli altri vertici del grafo, in base alle tipologie di distanza d1, d2 e d3.\\ \\
+	Per quanto riguarda l'analisi teorica si devono studiare le complessit\`{a} degli algoritmi di acquisizione del file (punto 2), calcolo del percorso pi\`{u} breve tra due vertici (punto 3) e calcolo di media e mediana (punto 4).\\
+	Per quanto riguarda il punto 4 si deve anche verificare sperimentalmente la complessit\`{a} delcalcolo di media e mediana, generando casualmente una sequenza di distanze (di N numeri reali) da fornire come input all'algoritmo per valori crescenti di N.
 
 	\newpage
 \section{Progettazione dell problema}
-Ogni carattere letto dal file viene direttamente verificato se \`{e} ammesso. Il nodo e l'arco presso da ogni riga viene salvato in una struttura dinamica di tipo: \\
+Ogni carattere letto dal file viene validato immediatamente. Il nodo e l'arco preso da ognuna delle righe viene salvato in una struttura dinamica di questo tipo: \\\\
 \{\\
 \indent nome del nodo,\\
 \indent archi del nodo,\\
 \indent minima distanza,\\
 \indent parente del nodo,\\
 \indent nodo successivo; \\
-\}\\
-dove i archi sono salvati in una struttura di tipo:\\
+\}\\\\
+e gli archi vengono salvati in una struttura di questo tipo:\\\\
 \{\\
-  nome del nodo di destinazione,\\
-  nodo di destinazione,\\
-  la tripla della distanza,\\
-  arco successivo;\\
-\}\\
-Un vertice sorgente, un vertice destinazione e una tipologia di distanze (d1 oppure d2 oppure d3) viene chiesto al utente.\\
-In questo grafo si tratta di distanze quindi è una buona occasione di aspettare che no chi sono dei archi di peso negativo. Ne consegue che l' algoritmo di Dijkstra è una buona scelta.\\
-La mediana è calcolato con quickselect, un algoritmo randomizzato che trova il k-esimo elemento di una struttura disordinata di grandezza n eseguendo O( n$^2$ ) confronti nel caso peggiore e O(n) nel caso ottimo. Quickselect è semplice da implementare è se ben implementata in pratica un po più veloce di heapselect.\\
-Al utente viene mostrato il percorso pi\`{u} breve tra sorgente e destinazione, la media e la mediana della distanze minime che separano tale vertice da tutti gli altri vertici del grafo
+\indent nome del nodo di destinazione,\\
+\indent nodo di destinazione,\\
+\indent la tripla della distanza,\\
+\indent arco successivo;\\
+\}\\\\
+Un vertice sorgente, un vertice destinazione e una tipologia di distanze (d1 oppure d2 oppure d3) viene chiesto all'utente.\\
+Visto che i valori in questo grafo sono distanze, non possono essere negativi. Per questa ragione l'algoritmo di Dijkstra \`{e} una buona scelta.\\\\
+
+La mediana viene calcolata con quickselect, un'algoritmo randomizzato che trova il k-esimo elemento di una struttura disordinata con n elementi eseguendo in O(n$^2$) nel caso pessimo e O(n) nel caso ottimo.\\\\ 
+
+Quickselect \`{e} relativamente semplice da implementare, e, se implementato correttamente, leggermente pi\`{u} veloce di heapselect.\\
+All'utente viene mostrato il percorso pi\`{u} breve tra i nodi sorgente e destinazione definiti dall'utente e anche la media e la mediana delle distanze minime dal nodo sorgente a tutti gli altri vertici del grafo.
 	\newpage
 \section{Valutazione della complessit\`{a} del programma}
-Essendo che l' algoritmo in lavora si applica su strutture del tipo grafo, la complessità verrà espressa in 
-funzione del numero di vertici e di archi del grafo stesso. A questo scopo verrà indicato con $|$V$|$ il 
+Visto che l' algoritmo viene applicato su struttura a grafo, la complessit\`{a} pu\`{o} essere espressa in 
+funzione del numero di vertici e di archi del grafo stesso. A questo scopo verr\`{a} indicato con $|$V$|$ il 
 numero di vertici e con $|$E$|$ (edges) il numero di tutti gli archi.\\
 \\
-La complessità del algoritmo di acquisizione:\\
+La complessit\`{a} dell'algoritmo di acquisizione:\\
 \indent T($|$V$|$, $|$E$|$) = 1+ $|$V$|$ + $|$E$|$ = O($|$V$|$ + $|$E$|$)\\
-La complessità del algoritmo per calcolare il percorso pi\`{u} breve tra due vertici(Algoritmo di Dijkstra):\\
-\indent T ($|$V $|$, $|$E$|$) = O($|$V $|$ · log $|$V $|$ + $|$E$|$)\\
-La complessità del algoritmo per calcolare la media:\\
+La complessit\`{a} dell'algoritmo per calcolare il percorso pi\`{u} breve tra due vertici (Algoritmo di Dijkstra):\\
+\indent T ($|$V$|$, $|$E$|$) = O($|$V$|$ x log $|$V$|$ + $|$E$|$)\\
+La complessit\`{a}  dell'algoritmo per calcolare la media:\\
 \indent T($|$V$|$, $|$E$|$) = O($|$V$|$)\\
-La complessità del algoritmo per calcolare la mediana(quickselect):\\
+La complessit\`{a} dell'algoritmo per calcolare la mediana (quickselect):\\
 \indent Caso ottimo:\\
 \indent \indent T($|$V$|$, $|$E$|$) = $|$V$|$ + $|$V$|$ + T($|$V$|$ / 2) = O($|$V$|$)\\
 \indent Caso pessimo:\\
 \indent \indent T($|$V$|$, $|$E$|$) = $|$V$|$ + $|$V$|$ + T($|$V$|$ - 1) = O($|$V$|$2)\\
 	\newpage
-\section{Valutazione sperimentalmente della complessit\`{a} del calcolo di media e mediana}
-Si vede anche nella valutazione sperimentale la complessit\`{a} O($|$V$|$) del calcolo della media.
+\section{Valutazione sperimentale della complessit\`{a} del calcolo di media e mediana}
+Nei risultati della valutazione sperimentale si vede che la complessit\`{a} del calcolo della media \`{e} O($|$V$|$).
 \begin{figure}[htp]
 \centering
 \includegraphics[scale=0.80]{img/calcolo_media.png}
 \caption{complessit\`{a} del calcolo di media}
 \end{figure}
 \newpage
-Anche l'risultato dalla valutazione sperimentale del calcolo della mediana non porta inaspettato. Qui si vede l'confronto dal calcolo di media e di mediana. La complessit\`{a} varia molto perch\`{e} quickselect \`{e} randomizzato quindi dipende molto dalla partenza.
+Anche il risultato dalla valutazione sperimentale del calcolo della mediana non sorprende. Qui si vede il confronto dei calcoli di media e di mediana. 
+La complessit\`{a} varia molto perch\`{e} quickselect \`{e} casuale quindi dipende molto dal vertice di partenza.
 \begin{figure}[htp]
 \centering
 \includegraphics[scale=0.80]{img/calcolo_mediana.png}
