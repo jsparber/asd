@@ -31,6 +31,7 @@ typedef struct tList {
 	struct tList *next;
 } tList;
 
+int printRoute(tNode *);
 double calcMedian(tList *);
 tList * createListWithoutStart(tNode *);
 tList * generateRandomList();
@@ -128,9 +129,9 @@ int main (int argNo, char *argC[]){
 				}
 				nodeList = createListWithoutStart(dataHead);
 				averageDistance = calcDistanceAverage(nodeList);
-				printf("Average distance is: %lf\n", averageDistance);
+				printf("Average distance of %s with all other nodes is: %lf\n", startNode, averageDistance);
 				median = calcMedian(nodeList);
-				printf("Median is %lf\n", median);
+				printf("Median distance of %s with all other nodes is %lf\n", startNode, median);
 				for (dataHead = dataHead; dataHead != NULL; dataHead = dataHead->next)
 					free(dataHead);
 			}
@@ -402,12 +403,17 @@ int calcRoute(tNode *headData, char startNode[], char endNode[], int typology) {
 
 /* prints the resulting route to the standart output*/
 int printResult(tNode *startNode, tNode *endNode) {
-	tNode *node;
-	printf("Route:\n");
-	for (node = endNode; node != startNode; node = node->parent)
-		printf("\t%s\n", node->parent->node);
-	printf("Result Distance is: %lf\n", endNode->minDistance);
+	printf("The route between %s and %s is\n",startNode->node, endNode->node);
+  printRoute(endNode->parent);
+	/*for (node = endNode; node != startNode; node = node->parent)*/
+	printf("The distance between %s and %s is %lf\n",startNode->node, endNode->node, endNode->minDistance);
 	return 0;
+}
+int printRoute(tNode *node) {
+  if (node->parent->parent != NULL)
+    printRoute(node->parent);
+	printf("\t%s\n", node->node);
+  return 0;
 }
 
 /* this funtion is a implementation of dijkstra algorithm*/
