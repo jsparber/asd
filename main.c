@@ -228,7 +228,7 @@ tNode* loadDB(FILE *inputDB) {
 		}
 	}
 	if (!error) {
-		printf("Got this Data:\n");
+		printf("loaded this data from 'database.txt':\n");
 		printAllNode(DataHead);
 	}
 	return (!error) ? DataHead : NULL;
@@ -416,7 +416,7 @@ int printResult(tNode *startNode, tNode *endNode) {
 int printRoute(tNode *node) {
   if (node->parent->parent != NULL)
     printRoute(node->parent);
-	printf("\t%s with distance %lf\n", node->node, node->minDistance);
+	printf("\t%s with distance  %lf\n", node->node, node->minDistance);
   return 0;
 }
 
@@ -566,7 +566,7 @@ int printArc(tArc *arc) {
 	for (i = 0; i < STRING_LENGTH && arc->node[i] != '\n'; i++)
 		printf("%c", arc->node[i]);
 	printf(" with distances: ");
-	printf("%.2lf %.2lf %.2lf",
+	printf("[0] %.2lf, [1] %.2lf, [2] %.2lf",
 			arc->distance[0], arc->distance[1], arc->distance[2]);
 	printf("\n");
 	if (arc->next != NULL)
@@ -616,7 +616,7 @@ int getNodeName(FILE *inputDB, char node[]) {
 	char tmpChar;
 	do {
 		if (i > STRING_LENGTH - 2) {
-			printf("To long node name\n");
+			printf("To long node name or some file errors\n");
 			error = true;
 			while ( tmpChar != ' ') {
 				tmpChar = fgetc(inputDB);
