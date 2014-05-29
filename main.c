@@ -403,10 +403,14 @@ int calcRoute(tNode *headData, char startNode[], char endNode[], int typology) {
 
 /* prints the resulting route to the standart output*/
 int printResult(tNode *startNode, tNode *endNode) {
-	printf("The route between %s and %s is\n",startNode->node, endNode->node);
-  printRoute(endNode->parent);
-	/*for (node = endNode; node != startNode; node = node->parent)*/
-	printf("The distance between %s and %s is %lf\n",startNode->node, endNode->node, endNode->minDistance);
+  if (endNode->parent->parent) {
+	  printf("The route between %s and %s is\n",startNode->node, endNode->node);
+    printRoute(endNode->parent);
+  }
+  else
+	  printf("The route between %s and %s is direct.\n",startNode->node, endNode->node);
+	  printf("The distance between %s and %s is %lf\n",startNode->node, endNode->node, endNode->minDistance);
+
 	return 0;
 }
 int printRoute(tNode *node) {
