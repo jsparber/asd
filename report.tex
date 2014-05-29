@@ -1,7 +1,7 @@
 \documentclass[11pt, a4paper, titlepage, block]{article}
 \usepackage{listings}
 \hyphenpenalty=10000
-
+\lstset{escapechar=\@, tabsize=2, basicstyle=\ttfamily}
 \usepackage{graphicx}
 \begin{document}
 \begin{titlepage}
@@ -145,7 +145,7 @@ monitor tale percorso e la relativa distanza.
 	\}\\\\
 
 	Visto che i valori in questo grafo sono distanze, non possono essere negativi. Per questa ragione l'algoritmo di Dijkstra \`{e} una buona scelta.\\\\
-	\lstset{escapechar=\@, tabsize=2}
+	
 	\begin{lstlisting}
 void inizializza(vertice_grafo_t *grafo_p, 
 					vertice_grafo_t *sorgente_p)
