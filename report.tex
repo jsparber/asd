@@ -145,12 +145,178 @@ monitor tale percorso e la relativa distanza.
 	\}\\\\
 
 	Visto che i valori in questo grafo sono distanze, non possono essere negativi. Per questa ragione l'algoritmo di Dijkstra \`{e} una buona scelta.\\\\
+	\lstset{escapechar=\@, tabsize=2}
+	\begin{lstlisting}
+void inizializza(vertice_grafo_t *grafo_p, 
+					vertice_grafo_t *sorgente_p)
+{
+  vertice_grafo_t *vertice_p;
+  for (vertice_p = grafo_p;
+ 	  (vertice_p != NULL);
+	  vertice_p = vertice_p->vertice_succ_p)
+  {
+    vertice_p->distanza_min = INFINITO;
+    vertice_p->padre_p = NULL;
+  }
+  sorgente_p->distanza_min = 0.0;
+}
+	\end{lstlisting}
+	\newpage
+	\begin{lstlisting}
+void riduci(arco_grafo_t *arco_p, vertice_grafo_t *vertice_p)
+/* vertice da cui l'arco esce */
+{
+  if (arco_p->vertice_adiac_p->distanza_min > 
+  		vertice_p->distanza_min + arco_p->peso)
+  {
+    arco_p->vertice_adiac_p->distanza_min = 
+    	vertice_p->distanza_min + arco_p->peso;
+    arco_p->vertice_adiac_p->padre_p = vertice_p;
+  }
+}
+	\end{lstlisting}
 
+	\begin{lstlisting}
+void dijkstra(vertice grafo t *grafo p, vertice grafo t *sorgente p)
+{
+  vertice grafo t *vertice p;
+  arco grafo t
+  *arco p;
+  inizializza(grafo p, sorgente p);
+  <costruisci un insieme per i vertici 
+  gi@\`{a}@ considerati (inizialmente vuoto)>
+  <costruisci una struttura 
+  	per i vertici da considerare (inizialmente tutti)>
+  while (<la struttura non e vuota>)
+  {
+    <rimuovi dalla struttura 
+    il vertice vertice p con distanza min minima>
+    <inserisci vertice p nell’insieme dei vertici gi@\`{a}@ considerati>
+    for (arco p = vertice p->lista archi p;
+    (arco p != NULL);
+    arco p = arco p->arco succ p)
+      if (<arco p->vertice adiac p 
+      		non @\`{e}@ nell'insieme dei vertici gi@\`{a}@ considerati>)
+        riduci(arco p, vertice p);
+  }
+}
+\end{lstlisting}
+\newpage
 	La mediana viene calcolata con quickselect, un'algoritmo randomizzato che trova il k-esimo elemento di una struttura disordinata con n elementi eseguendo in O(n$^2$) nel caso pessimo e O(n) nel caso ottimo.\\\\ 
 
 	Quickselect \`{e} relativamente semplice da implementare, e se ben implementato leggermente pi\`{u} veloce di heapselect.\\
+	\begin{lstlisting}
+algoritmo Quickselect(array A, intero K) -> elemento_array
+
+  seleziona un elemento_array x in A
+  partiziona A rispetto ad x calcolando:
+
+  A1 = { y appartenente ad A : y < x } 
+  A2 = { y appartenente ad A : y = x }
+  A3 = { y appartenente ad A : y > x }
+
+  se ( k < |A1| ) 
+  	allora ritorna Quickselect(A1,k)
+
+  altrimenti se ( k > |A1| + |A2| ) 
+  	allora ritorna Quickselect(A3, k - |A1| - |A2|)
+
+  altrimenti ritorna x
+	\end{lstlisting}
 	\newpage
 \section{Implementazione dell'algoritmo}
+	\subsection{Strutture}
+	Le strutture usate sono:
+	\begin{lstlisting}
+typedef struct tArc {
+    char node[STRING_LENGTH];
+    double distance[3];
+    struct tArc *next;
+    struct tNode *dest;
+  } tArc;
+  
+typedef struct tNode {
+    char node[STRING_LENGTH];
+    tArc *arc;
+    struct tNode *next;
+    double minDistance;
+    struct tNode *parent;
+  } tNode;
+  
+typedef struct tList {
+    tNode *node;
+    struct tList *next;
+  } tList;
+ \end{lstlisting}
+ $\\$
+ Il nome dei vertice devono iniziare con "v" e posso avere al massimo 255 charateri (STRING\_LENGTH)
+
+ \newpage
+ \subsection{Main()}
+  Nella funzione main vengono chiamate tutte l' varie funzione che elaborare tutte i compiti.
+ \subsection{Percorso}
+ Inizialmente viene cercato nel grafo l' indirizzo del nodo di partenza e del nodo di destinazione.\\\\
+ Per l' algoritmo di Dijkstra non viene utilizato l' insime per i vertici gi\`{a} considerati perch\`{e} redundante
+ con la  struttura per i vertici da considerare.\\
+ \newpage
+ \subsection{Median}
+ Prima del calcolo della median (e media) viene costruito una lista da tutti i nodi.
+ Cos\`{i} si pi\`{u} ordinare la liste faccilmente senza distruggere la ordinaziona iniziale.\\\\
+ Calcolo della median:\\
+ (Le righe non sinificatve sono stati rimossi)
+ \begin{lstlisting}
+double calcMedian(tList *nodeList) {
+	int length;
+	double median;
+	length = listLength(nodeList);
+	if (length % 2 == 0)
+		median = (findElement(nodeList, length/2) +
+			findElement(nodeList, length/2 + 1)) / 2;
+	else
+		median = findElement(nodeList, length/2 + 1);
+	return median;
+}
+ \end{lstlisting}
+$\\$
+La implementazion di quickselect:\\
+
+ \begin{lstlisting}
+ double findElement(tList *nodeList, int median) {
+	int x = listLength(nodeList);
+	int lengthMinorList;
+	int lengthEqualList;
+	double randomMinDistance = 
+		getMinDistance(nodeList, 
+			(int) (x * ((double)rand() / RAND_MAX)));
+	double result;
+	tList * minorList = NULL;
+	tList * equalList = NULL;
+	tList * majorList = NULL;
+	tList * listEl;
+
+	for (listEl = nodeList; listEl != NULL; listEl = listEl->next) {
+		if (listEl->node->minDistance < randomMinDistance)
+			addList(&minorList, listEl->node);
+		else if (listEl->node->minDistance == randomMinDistance)
+			addList(&equalList, listEl->node);
+		else if (listEl->node->minDistance > randomMinDistance)
+			addList(&majorList, listEl->node);
+	}
+	lengthMinorList = listLength(minorList);
+	lengthEqualList = listLength(equalList);
+	if (median <= lengthMinorList)
+		result = findElement(minorList, median);
+	else if (median > lengthMinorList + lengthEqualList)
+		result = findElement(majorList, 
+			median - lengthMinorList - lengthEqualList);
+	else
+		result = randomMinDistance;
+
+	return result;
+}
+ \end{lstlisting}
+ $\\$
+
 	\newpage
 \section{Testing del programma}
 	\subsection{Output del programma se vengono utilizzato i dati dal esempio}
@@ -177,6 +343,7 @@ Arcs of: v_e
 	v_a with distances: [0] 12.60, [1] 16.20, [2] 14.10
 ...
 	\end{lstlisting}
+	\newpage
 	\subsection{Output del programma per il percorso da v\_a a v\_b e tipologia 0}
 	\begin{lstlisting}
 ...
@@ -228,7 +395,7 @@ The distance between v_d and v_e is 11.600000
 Average distance of v_d with all other nodes is: 17.175000
 Median distance of v_d with all other nodes is 15.350000
 	\end{lstlisting}
-	
+	$\\$
 		\subsection{Output del programma per il percorso da v\_d a v\_c e tipologia 1}
 	\begin{lstlisting}
 ...
@@ -261,7 +428,7 @@ The route between v_a and v_b is direct.
 The distance between v_a and v_b is 9.700000
 Average distance of v_a with all other nodes is: 4.975000
 Median distance of v_a with all other nodes is 3.750000
-	\end{lstlisting}
+	\end{lstlisting} $\\$
 	\subsection{Output del programma per il percorso da v\_b a v\_a e tipologia 2}
 	\begin{lstlisting}
 ...
@@ -285,17 +452,17 @@ Median distance of v_b with all other nodes is 0.750000
 	funzione del numero di vertici e di archi del grafo stesso. A questo scopo verr\`{a} indicato con $|$V$|$ il 
 	numero di vertici e con $|$E$|$ (edges) il numero di tutti gli archi.\\
 	\\
-	La complessit\`{a} dell'algoritmo di acquisizione:\\
-	\indent T($|$V$|$, $|$E$|$) = 1+ $|$V$|$ + $|$E$|$ = O($|$V$|$ + $|$E$|$)\\
-	La complessit\`{a} dell'algoritmo per calcolare il percorso pi\`{u} breve tra due vertici (Algoritmo di Dijkstra):\\
-	\indent T ($|$V$|$, $|$E$|$) = O($|$V$|$ x log $|$V$|$ + $|$E$|$)\\
-	La complessit\`{a}  dell'algoritmo per calcolare la media:\\
-	\indent T($|$V$|$, $|$E$|$) = O($|$V$|$)\\
-	La complessit\`{a} dell'algoritmo per calcolare la mediana (quickselect):\\
-	\indent Caso ottimo:\\
-	\indent \indent T($|$V$|$, $|$E$|$) = $|$V$|$ + $|$V$|$ + T($|$V$|$ / 2) = O($|$V$|$)\\
-	\indent Caso pessimo:\\
-	\indent \indent T($|$V$|$, $|$E$|$) = $|$V$|$ + $|$V$|$ + T($|$V$|$ - 1) = O($|$V$|$2)\\
+	La complessit\`{a} dell'algoritmo di acquisizione:\\\\
+	\indent T($|$V$|$, $|$E$|$) = 1+ $|$V$|$ + $|$E$|$ = O($|$V$|$ + $|$E$|$)\\\\
+	La complessit\`{a} dell'algoritmo per calcolare il percorso pi\`{u} breve tra due vertici (Algoritmo di Dijkstra):\\\\
+	\indent T ($|$V$|$, $|$E$|$) = O($|$V$|$ x $\log$$|$V$|$ + $|$E$|$)\\\\
+	La complessit\`{a}  dell'algoritmo per calcolare la media:\\\\
+	\indent T($|$V$|$, $|$E$|$) = O($|$V$|$)\\\\
+	La complessit\`{a} dell'algoritmo per calcolare la mediana (quickselect):\\\\
+	\indent Caso ottimo:\\\\
+	\indent \indent T($|$V$|$, $|$E$|$) = $|$V$|$ + $|$V$|$ + T($|$V$|$ / 2) = O($|$V$|$)\\\\
+	\indent Caso pessimo:\\\\
+	\indent \indent T($|$V$|$, $|$E$|$) = $|$V$|$ + $|$V$|$ + T($|$V$|$ - 1) = O($|$V$|$$^{2}$)\\\\
 	\newpage
 \subsection{Valutazione sperimentale della complessit\`{a} del calcolo di media e mediana}
 	Nei risultati della valutazione sperimentale si vede che la complessit\`{a} del calcolo della media \`{e} O($|$V$|$).
