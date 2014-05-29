@@ -416,7 +416,7 @@ int printResult(tNode *startNode, tNode *endNode) {
 int printRoute(tNode *node) {
   if (node->parent->parent != NULL)
     printRoute(node->parent);
-	printf("\t%s with distance  %lf\n", node->node, node->minDistance);
+	printf("\t%s with distance %lf\n", node->node, node->minDistance);
   return 0;
 }
 
