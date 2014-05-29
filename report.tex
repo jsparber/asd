@@ -21,11 +21,11 @@
 
 
 %\HRule \\[0.4cm]
-{ \huge \bfseries Project Report}\\[1.2cm]
+{ \huge \bfseries Relazione di progetto}\\[1.2cm]
 %\HRule \\[0.4cm]
 
 {\LARGE Algoritmi e Strutture Dati}\\[0.5cm]
-{\large 2013/2014 summer session}
+{\large Sessione estiva 2013/2014}
 \\[1.5cm]
 
 {\large Julian Sparber}\\[0.2cm]
@@ -115,16 +115,16 @@ monitor tale percorso e la relativa distanza.
 	\newpage
 \section{Analisi del problema}
 	\subsection{INPUT}
-		Un vertice sorgente, un vertice destinazione e una tipologia di distanze (d1 oppure d2 oppure d3) viene chiesto all'utente.\\
+		Un vertice sorgente, un vertice destinazione e una tipologia di distanze (d1 oppure d2 oppure d3) inseriti dall'utente.\\
 		Un file sorgete che contine tutte le informazioni sui nodi.\\
 	\subsection{OUTPUT}
 		All'utente viene mostrato il percorso pi\`{u} breve tra i nodi sorgente e destinazione definiti dall'utente e anche la media e la mediana delle distanze minime dal nodo sorgente a tutti gli altri vertici del grafo.\\
 	\subsection{PERCORSO}
 	I valori in questo grafo sono distanze qundi non possono essere negativi.
 	\subsection{MEDIA}
-	La media \`{e} la somma di tutti i valori divsio per il nummero di valori.
+	La media \`{e} la somma di tutti i valori divisa per il numero di valori.
 	\subsection{MEDIANA}
-	La mediana \`{e} il elemento in mezzo di una lista ordinata (o se la lista \`{e} pari la media da i due elementi in mezzo)\\
+	La mediana \`{e} l'elemento centrale di una lista ordinata (o se la lista \`{e} ha un numero pari di elementi la media dei due elementi in mezzo).\\
 
 	\newpage
 \section{Progettazione dell'algoritmo}
@@ -202,9 +202,9 @@ void dijkstra(vertice grafo t *grafo p, vertice grafo t *sorgente p)
 }
 \end{lstlisting}
 \newpage
-	La mediana viene calcolata con quickselect, un'algoritmo randomizzato che trova il k-esimo elemento di una struttura disordinata con n elementi eseguendo in O(n$^2$) nel caso pessimo e O(n) nel caso ottimo.\\\\ 
+	La mediana viene calcolata con quickselect, un'algoritmo randomizzato che trova il k-esimo elemento di una struttura disordinata con n elementi eseguendo in O(n$^2$) nel caso pessimo e O(n) nel caso ottimo.\\\\
 
-	Quickselect \`{e} relativamente semplice da implementare, e se ben implementato leggermente pi\`{u} veloce di heapselect.\\
+	Quickselect \`{e} relativamente semplice da implementare, e se implementato correttamente, leggermente pi\`{u} veloce di heapselect.\\
 	\begin{lstlisting}
 algoritmo Quickselect(array A, intero K) -> elemento_array
 
@@ -249,21 +249,20 @@ typedef struct tList {
   } tList;
  \end{lstlisting}
  $\\$
- Il nome dei vertice devono iniziare con "v" e posso avere al massimo 255 charateri (STRING\_LENGTH)
+ I nomi dei vertici devono iniziare con "v" e possono avere al massimo 255 charateri (STRING\_LENGTH).
 
  \newpage
  \subsection{Main()}
-  Nella funzione main vengono chiamate tutte l' varie funzione che elaborare tutte i compiti.
+  Nella funzione main vengono chiamate tutte le varie funzioni.
  \subsection{Percorso}
  Inizialmente viene cercato nel grafo l' indirizzo del nodo di partenza e del nodo di destinazione.\\\\
- Per l' algoritmo di Dijkstra non viene utilizato l' insime per i vertici gi\`{a} considerati perch\`{e} redundante
- con la  struttura per i vertici da considerare.\\
+Per l' algoritmo di Dijkstra non viene utilizato l' insime per i vertici gi\`{a} considerati perch\`{e} sarebbe ridondante in questo caso.\\
  \newpage
- \subsection{Median}
- Prima del calcolo della median (e media) viene costruito una lista da tutti i nodi.
- Cos\`{i} si pi\`{u} ordinare la liste faccilmente senza distruggere la ordinaziona iniziale.\\\\
- Calcolo della median:\\
- (Le righe non sinificatve sono stati rimossi)
+ \subsection{Mediana}
+ Prima del calcolo della mediana (e media) viene costruita una lista da tutti i nodi.
+ Cos\`{i} possiamo ordinare la lista senza distruggere l'ordine iniziale.\\\\
+ Calcolo della mediana:\\
+ (Le righe non significatve sono state rimosse)
  \begin{lstlisting}
 double calcMedian(tList *nodeList) {
 	int length;
@@ -278,7 +277,7 @@ double calcMedian(tList *nodeList) {
 }
  \end{lstlisting}
 $\\$
-La implementazion di quickselect:\\
+L'implementazione di quickselect:\\
 
  \begin{lstlisting}
  double findElement(tList *nodeList, int median) {
@@ -319,7 +318,7 @@ La implementazion di quickselect:\\
 
 	\newpage
 \section{Testing del programma}
-	\subsection{Output del programma se vengono utilizzato i dati dal esempio}
+	\subsection{Output del programma se vengono utilizzati i dati dall'esempio}
 	\begin{lstlisting}
 ./distance
 loaded this data from 'database.txt':
@@ -448,9 +447,8 @@ Median distance of v_b with all other nodes is 0.750000
 	
 	\newpage
 \section{Valutazione della complessit\`{a} del programma}
-	Visto che l' algoritmo viene applicato su struttura a grafo, la complessit\`{a} pu\`{o} essere espressa in 
-	funzione del numero di vertici e di archi del grafo stesso. A questo scopo verr\`{a} indicato con $|$V$|$ il 
-	numero di vertici e con $|$E$|$ (edges) il numero di tutti gli archi.\\
+	Visto che l' algoritmo viene applicato su struttura a grafo, la complessit\`{a} pu\`{o} essere espressa in 	funzione del numero di vertici e di archi del grafo stesso. A questo scopo verr\`{a} indicato con $|$V$|$ il 
+	numero di vertici e con $|$E$|$ (edges) il numero totale di archi.\\
 	\\
 	La complessit\`{a} dell'algoritmo di acquisizione:\\\\
 	\indent T($|$V$|$, $|$E$|$) = 1+ $|$V$|$ + $|$E$|$ = O($|$V$|$ + $|$E$|$)\\\\
@@ -463,21 +461,27 @@ Median distance of v_b with all other nodes is 0.750000
 	\indent \indent T($|$V$|$, $|$E$|$) = $|$V$|$ + $|$V$|$ + T($|$V$|$ / 2) = O($|$V$|$)\\\\
 	\indent Caso pessimo:\\\\
 	\indent \indent T($|$V$|$, $|$E$|$) = $|$V$|$ + $|$V$|$ + T($|$V$|$ - 1) = O($|$V$|$$^{2}$)\\\\
+	
+		
 	\newpage
 \subsection{Valutazione sperimentale della complessit\`{a} del calcolo di media e mediana}
+	Questi grafi risultano quando viene fornito come input dell'algoritmo una sequenza di distanze (di N numeri reali), generata casualmente, per valori crescenti di N.
+	\subsubsection{media}
 	Nei risultati della valutazione sperimentale si vede che la complessit\`{a} del calcolo della media \`{e} O($|$V$|$).
+
 	\begin{figure}[htp]
 	\centering
 	\includegraphics[scale=0.80]{img/calcolo_media.png}
-	\caption{complessit\`{a} del calcolo di media}
+	\caption{complessit\`{a} del calcolo della media}
 	\end{figure}
 	\newpage
+	\subsubsection{mediana}
 	Anche il risultato dalla valutazione sperimentale del calcolo della mediana non sorprende. Qui si vede il confronto dei calcoli di media e di mediana. 
 	La complessit\`{a} varia molto perch\`{e} quickselect \`{e} casuale quindi dipende molto dal vertice di partenza.
 	\begin{figure}[htp]
 	\centering
 	\includegraphics[scale=0.80]{img/calcolo_mediana.png}
-	\caption{complessit\`{a} del calcolo di media(blue) e mediana(rosso)}
+	\caption{complessit\`{a} del calcolo di media (blu) e mediana (rosso)}
 	\end{figure}
 
 \end{document}
